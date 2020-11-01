@@ -1,0 +1,24 @@
+https://travishorn.com/creating-a-responsive-header-image-8ce1d2ed8a4c
+
+Your needs will dictate which breakpoints you should include; In general, you might consider…
+- 576px for extra small devices like portrait mode phones
+- 768px for small devices like landscape phones
+- 992px for medium devices like tablets
+- 1200px for large devices like desktops
+- 2560px for extra large devices like large desktops
+These are the same breakpoints used by Bootstrap 4.
+
+React slider
+https://caferati.me/demo/react-awesome-slider/fold
+
+Responsive layouts
+https://blog.logrocket.com/developing-responsive-layouts-with-react-hooks/
+
+React scroll to a specific component
+https://stackoverflow.com/questions/54715462/how-to-scroll-to-a-specific-targeted-component-when-clicking-on-navbar-link
+
+Icons and fontAwesome
+https://scotch.io/tutorials/using-font-awesome-5-with-react
+
+Cleanup event listeners
+https://www.pluralsight.com/guides/how-to-cleanup-event-listeners-react
