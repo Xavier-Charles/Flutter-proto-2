@@ -22,3 +22,6 @@ https://scotch.io/tutorials/using-font-awesome-5-with-react
 
 Cleanup event listeners
 https://www.pluralsight.com/guides/how-to-cleanup-event-listeners-react
+
+firebase react
+https://www.freecodecamp.org/news/how-to-build-a-todo-application-using-reactjs-and-firebase/
