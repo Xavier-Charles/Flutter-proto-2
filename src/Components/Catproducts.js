@@ -18,7 +18,7 @@ import img13 from '../assets/Products/13.jpg'
 const data = {
 
         1: {img: img1, link:"https://wa.me/2348064757678?text=I%20want%20Product%201", price: 2000, cat: 'shoes' },
-        2: {img: img2, link:"https://wa.me/2348064757678?text=I%20want%20Product%202", price: 4000, cat: 'shoes' },
+        2: {img: img2, link:"https://wa.me/2348064757678?text=I%20want%20Product%202", price: 4000, cat: 'bags' },
         3: {img: img3, link:"https://wa.me/2348064757678?text=I%20want%20Product%203", price: 2300, cat: 'accessories' },
         4: {img: img4, link:"https://wa.me/2348064757678?text=I%20want%20Product%204", price: 3400, cat: 'accessories' },
         5: {img: img5, link:"https://wa.me/2348064757678?text=I%20want%20Product%205", price: 5600, cat: 'bags' },
@@ -37,11 +37,11 @@ const data = {
 
 export default function CatProducts(props) {
 
-    console.log(props.match.params.handle)
-    console.log(data)
+    // console.log(props.match.params.handle)
+    console.log(props)
     return(
             <PostStyle>
-                {Object.values(data).filter(e => e.cat === props.match.params.handle).map((item, id) => {
+                {Object.values(data).filter(e => e.cat === props.category).map((item, id) => {
 
                     return(
                         <div className="card" key= {id}>

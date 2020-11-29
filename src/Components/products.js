@@ -33,7 +33,7 @@ const data = {
         
 }
 
-console.log(data)
+// console.log(data)
 
 export default function Products(props) {
 

@@ -26,9 +26,7 @@ app.post('/user/image', auth, uploadProfilePhoto);
 app.get('/user', auth, getUserDetail);
 app.post('/user', auth, updateUserDetails);
 
-
-
-exports.api = functions.https.onRequest(app);
-
+exports.api = functions.region('europe-west3').https.onRequest(app);
+exports.apiz = functions.region('europe-west3').https.onRequest(app);
 
 
