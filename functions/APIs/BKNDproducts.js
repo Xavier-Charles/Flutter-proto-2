@@ -1,4 +1,6 @@
-const { db } = require('../util/admin');
+const { admin, db } = require('../util/admin');
+const config = require('../util/config');
+const { v4 } = require('uuid')
 
 exports.getAllProducts = (request, response) => {
     // return response.status(500).json(request)
@@ -14,8 +16,10 @@ exports.getAllProducts = (request, response) => {
                     productId: doc.id,
                     name: doc.data().name,
 					img: doc.data().img,
-					price: doc.data().price,
-					createdAt: doc.data().createdAt,
+                    price: doc.data().price,
+                    description: doc.data().description,
+                    createdAt: doc.data().createdAt,
+                    category: doc.data().category
 				});
 			});
 			return response.json(products);
@@ -51,33 +55,102 @@ exports.getOneProduct = (request, response) => {
 };
 
 exports.postOneProduct = (request, response) => {
-	if (request.body.img.trim() === '') {
-		return response.status(400).json({ body: 'Must not be empty' });
-    }
+    const BusBoy = require('busboy');
+	const path = require('path');
+	const os = require('os');
+	const fs = require('fs');
+	const busboy = new BusBoy({ headers: request.headers });
+
+    let imageFileName;
+    let imageToBeUploaded = {};
+    let fields = new Map();
     
-    // if(request.body.price === 0) {
-    //     return response.status(400).json({ title: 'Price must not be empty' });
-    // }
+
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+		if (mimetype !== 'image/png' && mimetype !== 'image/jpeg') {
+			return response.status(400).json({ error: 'Wrong file type submited' });
+		}
+		const imageExtension = filename.split('.')[filename.split('.').length - 1];
+        imageFileName = `${v4()+'&'+request.user.username}.${imageExtension}`;
+		const filePath = path.join(os.tmpdir(), imageFileName);
+		imageToBeUploaded = { filePath, mimetype };
+        file.pipe(fs.createWriteStream(filePath));
+    });
+
+    busboy.on('field', function(fieldname, val) {
+      fields[fieldname] = val;
+    });
+
+	busboy.on('finish', () => {
+		admin
+			.storage()
+			.bucket()
+			.upload(imageToBeUploaded.filePath, {
+				resumable: false,
+				metadata: {
+					metadata: {
+						contentType: imageToBeUploaded.mimetype
+					}
+				}
+            })
+			.then(() => {
+				const img = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${imageFileName}?alt=media`;
+                let num
+
+                db
+                    .collection('users')
+                    .doc(`${request.user.username}`)
+                    .get()
+                    .then((doc) => {
+                        user = doc.data()
+                        console.log(user)
+
+                        if (user.phoneNumber/10000000000 < 1) {
+                            num = 234*10000000000 + (user.phoneNumber%10000000000)
+                        }else num = user.phoneNumber
+
+                        if ( !user.categories.includes(fields.category) && fields.category !== "") {
+                            user.categories.push(fields.category)
+                            let document = db.collection('users').doc(`${request.user.username}`);
+                            document.update(user)
+                        }
+                    
+                    })
+
+                const link = `${"https://wa.me/" + num + "?text=I%20want%20Product%20" + fields.name}`
+                const newProductItem = {
+                    username: request.user.username,
+                    name: fields.name,
+                    img,
+                    price: fields.price,
+                    link,
+                    category: fields.category,
+                    description: fields.description,
+                    createdAt: new Date().toISOString()
+                }
+                db
+                    .collection('products')
+                    .add(newProductItem)
+                    .then((doc)=>{
+                        const responseProductItem = newProductItem;
+                        responseProductItem.id = doc.id;
+                    })
+                    .catch((err) => {
+                        response.status(500).json({ error: 'Something went wrong' });
+                        console.error(err);
+                    });
+
+			})
+			.then(() => {
+				return response.json({ message: 'Product added successfully' });
+			})
+			.catch((error) => {
+				console.error(error);
+				return response.status(500).json({ error: error.code });
+			});
+	});
+	busboy.end(request.rawBody);
     
-    const newProductItem = {
-        username: request.user.username,
-        name: request.body.name === '' ? 'null' : request.body.name,
-        img: request.body.img,
-        price: request.body.price,
-        createdAt: new Date().toISOString()
-    }
-    db
-        .collection('products')
-        .add(newProductItem)
-        .then((doc)=>{
-            const responseProductItem = newProductItem;
-            responseProductItem.id = doc.id;
-            return response.json(responseProductItem);
-        })
-        .catch((err) => {
-			response.status(500).json({ error: 'Something went wrong' });
-			console.error(err);
-		});
 };
 
 exports.deleteProduct = (request, response) => {
@@ -104,18 +177,94 @@ exports.deleteProduct = (request, response) => {
 };
 
 exports.editProduct = ( request, response ) => { 
-    if(request.body.productId || request.body.createdAt){
-        response.status(403).json({message: 'Not allowed to edit'});
-    }
-    let document = db.collection('products').doc(`${request.params.productId}`);
-    document.update(request.body)
-    .then(()=> {
-        response.json({message: 'Updated successfully'});
-    })
-    .catch((err) => {
-        console.error(err);
-        return response.status(500).json({ 
-                error: err.code 
+
+    // console.log(request.user)
+    // return response.status(403).json({message: 'Not allowed to edit'})
+
+    const BusBoy = require('busboy');
+	const path = require('path');
+	const os = require('os');
+	const fs = require('fs');
+	const busboy = new BusBoy({ headers: request.headers });
+
+    let imageFileName;
+    let imageToBeUploaded = {};
+    var fields = new Map();
+    
+
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+		if (mimetype !== 'image/png' && mimetype !== 'image/jpeg') {
+			return response.status(400).json({ error: 'Wrong file type submited' });
+        }
+		const imageExtension = filename.split('.')[filename.split('.').length - 1];
+        imageFileName = `${v4()+'&'+request.user.username}.${imageExtension}`;
+		const filePath = path.join(os.tmpdir(), imageFileName);
+		imageToBeUploaded = { filePath, mimetype };
+        file.pipe(fs.createWriteStream(filePath));
+    });
+
+    busboy.on('field', function(fieldname, val) {
+      fields[fieldname] = val;
+    });
+
+    busboy.on('finish', async function() {
+        fields = Object.fromEntries(Object.entries(fields))
+        // console.log(imageToBeUploaded);
+        if(fields.productId || fields.createdAt){
+            response.status(403).json({message: 'Not allowed to edit'});
+        }
+        // if(true){
+        //     response.status(403).json({message: 'Not allowed to edit'});
+        // }
+
+        if (Object.keys(imageToBeUploaded).length !== 0) {
+            await admin
+                .storage()
+                .bucket()
+                .upload(imageToBeUploaded.filePath, {
+                    resumable: false,
+                    metadata: {
+                        metadata: {
+                            contentType: imageToBeUploaded.mimetype
+                        }
+                    }
+            })
+            fields.img = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${imageFileName}?alt=media`;
+        }else {delete fields.img}
+        let num
+        await db
+            .collection('users')
+            .doc(`${request.user.username}`)
+            .get()
+            .then((doc) => {
+                user = doc.data()
+
+                if (user.phoneNumber/10000000000 < 1) {
+                        num = 234*10000000000 + (user.phoneNumber%10000000000)
+                        user.phoneNumber = num
+                }else num = user.phoneNumber
+
+                if ( !user.categories.includes(fields.category) && fields.category !== "") {
+                    user.categories.push(fields.category)
+                    let document = db.collection('users').doc(`${request.user.username}`);
+                    document.update(user)
+                }else {delete fields.category}
+            })
+
+        fields.link = `${"https://wa.me/" + num + "?text=I%20want%20Product%20" + fields.name}`
+        let document = db.collection('products').doc(`${request.params.productId}`);
+        // console.log(document)
+        // return response.status(403).json({message: 'Not allowed to edit'});
+        document.update(fields)
+        .then(()=> {
+            response.json({message: 'Updated successfully'});
+        })
+        .catch((err) => {
+            console.error(err);
+            return response.status(500).json({ 
+                    error: err.code 
+            });
         });
     });
+    busboy.end(request.rawBody); 
 };

@@ -8,6 +8,12 @@ const {
 } = require('./APIs/users')
 const auth = require('./util/auth');
 
+const config = require('./util/config');
+
+const firebase = require('firebase');
+
+firebase.initializeApp(config);
+
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //   functions.logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
@@ -15,9 +21,9 @@ const auth = require('./util/auth');
 
 //todo find a way to replace "auth" in get methods
 app.get('/products', auth, getAllProducts);
-app.get('/products', auth, getOneProduct);
+app.get('/products/:productId', auth, getOneProduct);
 app.post('/product', auth, postOneProduct);
-app.delete('/product/:productId', auth, deleteProduct);
+app.delete('/del_product/:productId', auth, deleteProduct);
 app.put('/product/:productId', auth, editProduct);
 
 app.post('/login', loginUser);
@@ -27,6 +33,6 @@ app.get('/user', auth, getUserDetail);
 app.post('/user', auth, updateUserDetails);
 
 exports.api = functions.region('europe-west3').https.onRequest(app);
-exports.apiz = functions.region('europe-west3').https.onRequest(app);
+// exports.apiz = functions.region('europe-west3').https.onRequest(app);
 
 

@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.0",
     "busboy": "^0.3.1",
+    "dayjs": "^1.9.6",
     "express": "^4.17.1",
     "firebase": "^8.1.1",
     "firebase-admin": "^9.4.1",
@@ -20,6 +21,7 @@
     "react-router-hash-link": "^2.2.2",
     "react-scripts": "4.0.0",
     "styled-components": "^5.2.0",
+    "uuidv4": "^6.2.5",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
@@ -46,5 +48,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://europe-west3-jedi-proto-1.cloudfunctions.net/api"
+    "proxy": "http://localhost:5001/jedi-proto-1/europe-west3/api"
+
 }
+
+

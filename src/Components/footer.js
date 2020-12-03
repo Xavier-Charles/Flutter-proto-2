@@ -30,7 +30,7 @@ function Footer(props) {
                 <p className="text">Drop us a line anytime and we’ll get back to you within 24 hours.</p>
                 <p className="textBold">hello@fyrozine.ng</p>
             </div>
-            {/* <div class="end">
+            {/* <div className="end">
                 <p>©2020 Powered by fyr</p>
             </div> */}
         </Styled>

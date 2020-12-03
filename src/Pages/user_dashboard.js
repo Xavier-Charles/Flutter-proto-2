@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import Account from '../Components/account';
-import Products from '../Components/products';
+// import Products from '../Components/products';
+import Products from '../Components/user_products';
 
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
@@ -98,7 +99,7 @@ class Dashboard extends Component {
 		axios
 			.get('/user')
 			.then((response) => {
-				console.log(response.data);
+				// console.log(response.data);
 				this.setState({
 					firstName: response.data.userCredentials.firstName,
 					lastName: response.data.userCredentials.lastName,
@@ -106,6 +107,7 @@ class Dashboard extends Component {
 					phoneNumber: response.data.userCredentials.phoneNumber,
 					country: response.data.userCredentials.country,
 					username: response.data.userCredentials.username,
+					categories: response.data.userCredentials.categories,
 					uiLoading: false,
 					profilePicture: response.data.userCredentials.imageUrl
 				});
@@ -182,7 +184,7 @@ class Dashboard extends Component {
 						</List>
 					</Drawer>
 
-					<div>{this.state.render ? <Account /> : <Products />}</div>
+					<div>{this.state.render ? <Account /> : <Products categories={this.state.categories} />}</div>
 				</div>
 			);
 		}

@@ -6,7 +6,7 @@ import login from './Pages/login';
 import signUp from './Pages/signUp';
 import Home from './Pages/user_home';
 import Categorised from './Pages/categorised'
-import UserProducts from './Pages/user_products'
+import ProductsPage from './Pages/productsPage'
 import Dashboard from './Pages/user_dashboard'
 
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
@@ -21,7 +21,7 @@ function App() {
               <Home/>
           </Route>
 
-          <Route exact path="/products" component={UserProducts}/> 
+          <Route exact path="/products" component={ProductsPage}/> 
 
           <Route exact path="/categorised/:handle" component={Categorised}/>
           <Route exact path="/login" component={login}/>

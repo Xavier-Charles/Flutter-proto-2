@@ -1,5 +1,8 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components'
+import ProductCard from './productCard'
+import { authMiddleWare } from '../util/auth';
+import axios from 'axios';
 
 import img8 from '../assets/Products/1.jpg'
 import img1 from '../assets/Products/2.jpg'
@@ -33,24 +36,48 @@ const data = {
         
 }
 
-// console.log(data)
 
 export default function Products(props) {
 
-    return(
+    const [ProductData, setProductData] = useState({})
+
+
+    useEffect(() => {
+		authMiddleWare(props.history);
+		const authToken = localStorage.getItem('AuthToken');
+		axios.defaults.headers.common = { Authorization: `${authToken}` };
+		axios
+			.get('/products')
+			.then((response) => {
+				setProductData(response.data);
+            })
+			.catch((err) => {
+				console.log(err);
+			});
+    }, [])
+    
+    // console.log(ProductData)
+
+    if (props.type === 'categorised') {
+        console.log(ProductData);
+        return(
             <PostStyle>
-                {Object.values(data).map((item, id) => {
+                {Object.values(ProductData).filter(e => e.category === props.category).map((item, id) => {
 
                     return(
-                        <div className="card" key={id}>
-                            <div className="pic">
-                                <img src={item.img}></img>
-                            </div>
-                            <div className="buttons">
-                                <a href={item.link} className="price" link=""><p><span>&#8358;</span>{item.price}</p></a>
-                                <a href={item.link} className="contact" link=""><p>I want this!</p></a>
-                            </div>
-                        </div>
+                        <ProductCard type="store" data={item} id={id}/>
+                    )
+                })}
+            </PostStyle>
+        )
+    }
+
+    return(
+            <PostStyle>
+                {Object.values(ProductData).map((item, id) => {
+
+                    return(
+                        <ProductCard type="store" data={item} id={id}/>
                     )
                 })}
             </PostStyle>
