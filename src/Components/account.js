@@ -28,7 +28,12 @@ const styles = (theme) => ({
 		flexGrow: 0
 	},
 	locationText: {
-		paddingLeft: '15px'
+		paddingLeft: '8px',
+		textAlign: 'left',
+		display: 'inline-block'
+	},
+	header: {
+		textAlign: "left"
 	},
 	buttonProperty: {
 		position: 'absolute',
@@ -46,8 +51,12 @@ const styles = (theme) => ({
 		position: 'absolute'
 	},
 	uploadButton: {
-		marginLeft: '8px',
+		// marginLeft: '8px',
 		margin: theme.spacing(1)
+	},
+	activateButon: {
+		margin: theme.spacing(1),
+		marginTop: '-2px'
 	},
 	customError: {
 		color: 'red',
@@ -68,12 +77,14 @@ class account extends Component {
 			lastName: '',
 			email: '',
 			phoneNumber: '',
-			username: '',
+			storename: '',
 			country: '',
 			profilePicture: '',
 			uiLoading: true,
 			buttonLoading: false,
-			imageError: ''
+			imageError: '',
+			errors: [],
+			activated: false
 		};
 	}
 
@@ -84,16 +95,17 @@ class account extends Component {
 		axios
 			.get('/user')
 			.then((response) => {
-				// console.log(response.data);
 				this.setState({
 					firstName: response.data.userCredentials.firstName,
 					lastName: response.data.userCredentials.lastName,
 					email: response.data.userCredentials.email,
-					phoneNumber: response.data.userCredentials.phoneNumber,
+					phoneNumber: `+${response.data.userCredentials.phoneNumber}`,
 					country: response.data.userCredentials.country,
-					username: response.data.userCredentials.username,
+					storename: response.data.userCredentials.storename,
+					activated: response.data.userCredentials.activated,
 					uiLoading: false
 				});
+				// console.log(response);
 			})
 			.catch((error) => {
 				if (error.response.status === 403) {
@@ -115,6 +127,33 @@ class account extends Component {
 			image: event.target.files[0]
 		});
 	};
+
+	handleActivate = (event) => {
+		event.preventDefault();
+		this.setState({
+			uiLoading: true
+		});
+		authMiddleWare(this.props.history);
+		const authToken = localStorage.getItem('AuthToken');
+		axios.defaults.headers.common = { Authorization: `${authToken}` };
+		axios
+			.post('/user/activate')
+			.then((res) => {
+				console.log(res)
+			})
+			.then(() => {
+				window.location.reload();
+			})
+			.catch((error) => {
+				if (error.response.status === 403) {
+					this.props.history.push('/login');
+				}
+				console.log(error);
+				this.setState({
+					buttonLoading: false
+				});
+			});
+	}
 
 	profilePictureHandler = (event) => {
 		event.preventDefault();
@@ -150,6 +189,225 @@ class account extends Component {
 
 	updateFormValues = (event) => {
 		event.preventDefault();
+
+		let num = this.state.phoneNumber
+		if (num.charAt(0) === "+"){
+				num =  num.replace("+", "")
+		} 
+		if (num/10000000000 < 1) {
+			num = `${234*10000000000 + (num%10000000000)}`
+		}
+		let country_list = ['AFGHANISTAN','ALBANIA',
+  'ALGERIA',
+  'ANDORRA',
+  'ANGOLA',
+  'ANGUILLA',
+  'ANTIGUA &AMP; BARBUDA',
+  'ARGENTINA',
+  'ARMENIA',
+  'ARUBA',
+  'AUSTRALIA',
+  'AUSTRIA',
+  'AZERBAIJAN',
+  'BAHAMAS',
+  'BAHRAIN',
+  'BANGLADESH',
+  'BARBADOS',
+  'BELARUS',
+  'BELGIUM',
+  'BELIZE',
+  'BENIN',
+  'BERMUDA',
+  'BHUTAN',
+  'BOLIVIA',
+  'BOSNIA &AMP; HERZEGOVINA',
+  'BOTSWANA',
+  'BRAZIL',
+  'BRITISH VIRGIN ISLANDS',
+  'BRUNEI',
+  'BULGARIA',
+  'BURKINA FASO',
+  'BURUNDI',
+  'CAMBODIA',
+  'CAMEROON',
+  'CAPE VERDE',
+  'CAYMAN ISLANDS',
+  'CHAD',
+  'CHILE',
+  'CHINA',
+  'COLOMBIA',
+  'CONGO',
+  'COOK ISLANDS',
+  'COSTA RICA',
+  'COTE D IVOIRE',
+  'CROATIA',
+  'CRUISE SHIP',
+  'CUBA',
+  'CYPRUS',
+  'CZECH REPUBLIC',
+  'DENMARK',
+  'DJIBOUTI',
+  'DOMINICA',
+  'DOMINICAN REPUBLIC',
+  'ECUADOR',
+  'EGYPT',
+  'EL SALVADOR',
+  'EQUATORIAL GUINEA',
+  'ESTONIA',
+  'ETHIOPIA',
+  'FALKLAND ISLANDS',
+  'FAROE ISLANDS',
+  'FIJI',
+  'FINLAND',
+  'FRANCE',
+  'FRENCH POLYNESIA',
+  'FRENCH WEST INDIES',
+  'GABON',
+  'GAMBIA',
+  'GEORGIA',
+  'GERMANY',
+  'GHANA',
+  'GIBRALTAR',
+  'GREECE',
+  'GREENLAND',
+  'GRENADA',
+  'GUAM',
+  'GUATEMALA',
+  'GUERNSEY',
+  'GUINEA',
+  'GUINEA BISSAU',
+  'GUYANA',
+  'HAITI',
+  'HONDURAS',
+  'HONG KONG',
+  'HUNGARY',
+  'ICELAND',
+  'INDIA',
+  'INDONESIA',
+  'IRAN',
+  'IRAQ',
+  'IRELAND',
+  'ISLE OF MAN',
+  'ISRAEL',
+  'ITALY',
+  'JAMAICA',
+  'JAPAN',
+  'JERSEY',
+  'JORDAN',
+  'KAZAKHSTAN',
+  'KENYA',
+  'KUWAIT',
+  'KYRGYZ REPUBLIC',
+  'LAOS',
+  'LATVIA',
+  'LEBANON',
+  'LESOTHO',
+  'LIBERIA',
+  'LIBYA',
+  'LIECHTENSTEIN',
+  'LITHUANIA',
+  'LUXEMBOURG',
+  'MACAU',
+  'MACEDONIA',
+  'MADAGASCAR',
+  'MALAWI',
+  'MALAYSIA',
+  'MALDIVES',
+  'MALI',
+  'MALTA',
+  'MAURITANIA',
+  'MAURITIUS',
+  'MEXICO',
+  'MOLDOVA',
+  'MONACO',
+  'MONGOLIA',
+  'MONTENEGRO',
+  'MONTSERRAT',
+  'MOROCCO',
+  'MOZAMBIQUE',
+  'NAMIBIA',
+  'NEPAL',
+  'NETHERLANDS',
+  'NETHERLANDS ANTILLES',
+  'NEW CALEDONIA',
+  'NEW ZEALAND',
+  'NICARAGUA',
+  'NIGER',
+  'NIGERIA',
+  'NORWAY',
+  'OMAN',
+  'PAKISTAN',
+  'PALESTINE',
+  'PANAMA',
+  'PAPUA NEW GUINEA',
+  'PARAGUAY',
+  'PERU',
+  'PHILIPPINES',
+  'POLAND',
+  'PORTUGAL',
+  'PUERTO RICO',
+  'QATAR',
+  'REUNION',
+  'ROMANIA',
+  'RUSSIA',
+  'RWANDA',
+  'SAINT PIERRE &AMP; MIQUELON',
+  'SAMOA',
+  'SAN MARINO',
+  'SATELLITE',
+  'SAUDI ARABIA',
+  'SENEGAL',
+  'SERBIA',
+  'SEYCHELLES',
+  'SIERRA LEONE',
+  'SINGAPORE',
+  'SLOVAKIA',
+  'SLOVENIA',
+  'SOUTH AFRICA',
+  'SOUTH KOREA',
+  'SPAIN',
+  'SRI LANKA',
+  'ST KITTS &AMP; NEVIS',
+  'ST LUCIA',
+  'ST VINCENT',
+  'ST. LUCIA',
+  'SUDAN',
+  'SURINAME',
+  'SWAZILAND',
+  'SWEDEN',
+  'SWITZERLAND',
+  'SYRIA',
+  'TAIWAN',
+  'TAJIKISTAN',
+  'TANZANIA',
+  'THAILAND',
+  "TIMOR L'ESTE",
+  'TOGO',
+  'TONGA',
+  'TRINIDAD &AMP; TOBAGO',
+  'TUNISIA',
+  'TURKEY',
+  'TURKMENISTAN',
+  'TURKS &AMP; CAICOS',
+  'UGANDA',
+  'UKRAINE',
+  'UNITED ARAB EMIRATES',
+  'UNITED KINGDOM',
+  'URUGUAY',
+  'UZBEKISTAN',
+ 'VENEZUELA',
+  'VIETNAM',
+  'VIRGIN ISLANDS (US)',
+  'YEMEN',
+  'ZAMBIA',
+  'ZIMBABWE']
+		if (!country_list.includes(this.state.country.toUpperCase())){
+			this.setState({
+				errors: {country: "Did you misspell this?"}, 
+				loading: false
+			})
+			return
+		}
 		this.setState({ buttonLoading: true });
 		authMiddleWare(this.props.history);
 		const authToken = localStorage.getItem('AuthToken');
@@ -157,7 +415,10 @@ class account extends Component {
 		const formRequest = {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
-			country: this.state.country
+			country: this.state.country,
+			storename: this.state.storename,
+			phoneNumber: num,
+			email: this.state.email
 		};
 		axios
 			.post('/user', formRequest)
@@ -170,6 +431,7 @@ class account extends Component {
 				}
 				console.log(error);
 				this.setState({
+					errors: error.response.data,
 					buttonLoading: false
 				});
 			});
@@ -177,6 +439,7 @@ class account extends Component {
 
 	render() {
 		const { classes, ...rest } = this.props;
+		const { errors } = this.state;
 		if (this.state.uiLoading === true) {
 			return (
 				<main className={classes.content}>
@@ -192,9 +455,28 @@ class account extends Component {
 						<CardContent>
 							<div className={classes.details}>
 								<div>
-									<Typography className={classes.locationText} gutterBottom variant="h4">
-										{this.state.firstName} {this.state.lastName}
-									</Typography>
+									<div className={classes.header}>
+										<Typography className={classes.locationText} gutterBottom variant="h4">
+											{this.state.firstName} {this.state.lastName}
+										</Typography>
+									</div>
+									<div className={classes.header}>
+										<Typography color="Gold "className={classes.locationText} gutterBottom variant="h5">
+											Activated
+										</Typography>
+										<Button
+											variant="outlined"
+											color="primary"
+											type="submit"
+											size="small"
+											startIcon={<CloudUploadIcon />}
+											className={classes.activateButon}
+											disabled= {this.state.activated}
+											onClick={this.handleActivate}
+										>
+											Activate
+										</Button>
+									</div>
 									<Button
 										variant="outlined"
 										color="primary"
@@ -238,6 +520,8 @@ class account extends Component {
 											variant="outlined"
 											value={this.state.firstName}
 											onChange={this.handleChange}
+											helperText={errors.firstName}
+											error={errors.firstName ? true : false}
 										/>
 									</Grid>
 									<Grid item md={6} xs={12}>
@@ -249,6 +533,8 @@ class account extends Component {
 											variant="outlined"
 											value={this.state.lastName}
 											onChange={this.handleChange}
+											helperText={errors.lastName}
+											error={errors.lastName ? true : false}
 										/>
 									</Grid>
 									<Grid item md={6} xs={12}>
@@ -258,34 +544,37 @@ class account extends Component {
 											margin="dense"
 											name="email"
 											variant="outlined"
-											disabled={true}
 											value={this.state.email}
 											onChange={this.handleChange}
+											helperText={errors.email}
+											error={errors.email ? true : false}
 										/>
 									</Grid>
 									<Grid item md={6} xs={12}>
 										<TextField
 											fullWidth
-											label="Phone Number"
+											label="Store Phone Number"
 											margin="dense"
-											name="phone"
-											type="number"
+											name="phoneNumber"
 											variant="outlined"
-											disabled={true}
 											value={this.state.phoneNumber}
 											onChange={this.handleChange}
+											helperText={errors.phoneNumber}
+											error={errors.phoneNumber ? true : false}
 										/>
 									</Grid>
 									<Grid item md={6} xs={12}>
 										<TextField
 											fullWidth
-											label="User Name"
+											label="Store Name"
 											margin="dense"
-											name="userHandle"
-											disabled={true}
+											name="storename"
+											disabled={false}
 											variant="outlined"
-											value={this.state.username}
+											value={this.state.storename}
 											onChange={this.handleChange}
+											helperText={errors.storename}
+											error={errors.storename ? true : false}
 										/>
 									</Grid>
 									<Grid item md={6} xs={12}>
@@ -297,6 +586,8 @@ class account extends Component {
 											variant="outlined"
 											value={this.state.country}
 											onChange={this.handleChange}
+											helperText={errors.country}
+											error={errors.country ? true : false}
 										/>
 									</Grid>
 								</Grid>

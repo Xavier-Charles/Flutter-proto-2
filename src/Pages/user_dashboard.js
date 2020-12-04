@@ -99,7 +99,7 @@ class Dashboard extends Component {
 		axios
 			.get('/user')
 			.then((response) => {
-				// console.log(response.data);
+				console.log(response);
 				this.setState({
 					firstName: response.data.userCredentials.firstName,
 					lastName: response.data.userCredentials.lastName,
@@ -113,6 +113,7 @@ class Dashboard extends Component {
 				});
 			})
 			.catch((error) => {
+				console.log(error);
 				if(error.response.status === 403) {
 					this.props.history.push('/login')
 				}

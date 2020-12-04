@@ -45,7 +45,7 @@ class signUp extends Component {
 			lastName: '',
 			phoneNumber: '',
 			country: '',
-			username: '',
+			storename: '',
 			email: '',
 			password: '',
 			confirmPassword: '',
@@ -64,23 +64,249 @@ class signUp extends Component {
 
 	handleChange = (event) => {
 		this.setState({
-			[event.target.name]: event.target.value
+			[event.target.name]: event.target.value,
+			errors: []
 		});
 	};
 
 	handleSubmit = (event) => {
 		event.preventDefault();
-		this.setState({ loading: true });
+		this.setState({ loading: true});
+
+		const {phoneNumber, firstName, lastName, 
+				country, storename, email, 
+				password, confirmPassword} = this.state
+
+		let num = phoneNumber
+		if (num.charAt(0) === "+"){
+				num =  num.replace("+", "")
+		} 
+		if (num/10000000000 < 1) {
+			num = `${234*10000000000 + (num%10000000000)}`
+		}
+		let country_list = ['AFGHANISTAN','ALBANIA',
+  'ALGERIA',
+  'ANDORRA',
+  'ANGOLA',
+  'ANGUILLA',
+  'ANTIGUA &AMP; BARBUDA',
+  'ARGENTINA',
+  'ARMENIA',
+  'ARUBA',
+  'AUSTRALIA',
+  'AUSTRIA',
+  'AZERBAIJAN',
+  'BAHAMAS',
+  'BAHRAIN',
+  'BANGLADESH',
+  'BARBADOS',
+  'BELARUS',
+  'BELGIUM',
+  'BELIZE',
+  'BENIN',
+  'BERMUDA',
+  'BHUTAN',
+  'BOLIVIA',
+  'BOSNIA &AMP; HERZEGOVINA',
+  'BOTSWANA',
+  'BRAZIL',
+  'BRITISH VIRGIN ISLANDS',
+  'BRUNEI',
+  'BULGARIA',
+  'BURKINA FASO',
+  'BURUNDI',
+  'CAMBODIA',
+  'CAMEROON',
+  'CAPE VERDE',
+  'CAYMAN ISLANDS',
+  'CHAD',
+  'CHILE',
+  'CHINA',
+  'COLOMBIA',
+  'CONGO',
+  'COOK ISLANDS',
+  'COSTA RICA',
+  'COTE D IVOIRE',
+  'CROATIA',
+  'CRUISE SHIP',
+  'CUBA',
+  'CYPRUS',
+  'CZECH REPUBLIC',
+  'DENMARK',
+  'DJIBOUTI',
+  'DOMINICA',
+  'DOMINICAN REPUBLIC',
+  'ECUADOR',
+  'EGYPT',
+  'EL SALVADOR',
+  'EQUATORIAL GUINEA',
+  'ESTONIA',
+  'ETHIOPIA',
+  'FALKLAND ISLANDS',
+  'FAROE ISLANDS',
+  'FIJI',
+  'FINLAND',
+  'FRANCE',
+  'FRENCH POLYNESIA',
+  'FRENCH WEST INDIES',
+  'GABON',
+  'GAMBIA',
+  'GEORGIA',
+  'GERMANY',
+  'GHANA',
+  'GIBRALTAR',
+  'GREECE',
+  'GREENLAND',
+  'GRENADA',
+  'GUAM',
+  'GUATEMALA',
+  'GUERNSEY',
+  'GUINEA',
+  'GUINEA BISSAU',
+  'GUYANA',
+  'HAITI',
+  'HONDURAS',
+  'HONG KONG',
+  'HUNGARY',
+  'ICELAND',
+  'INDIA',
+  'INDONESIA',
+  'IRAN',
+  'IRAQ',
+  'IRELAND',
+  'ISLE OF MAN',
+  'ISRAEL',
+  'ITALY',
+  'JAMAICA',
+  'JAPAN',
+  'JERSEY',
+  'JORDAN',
+  'KAZAKHSTAN',
+  'KENYA',
+  'KUWAIT',
+  'KYRGYZ REPUBLIC',
+  'LAOS',
+  'LATVIA',
+  'LEBANON',
+  'LESOTHO',
+  'LIBERIA',
+  'LIBYA',
+  'LIECHTENSTEIN',
+  'LITHUANIA',
+  'LUXEMBOURG',
+  'MACAU',
+  'MACEDONIA',
+  'MADAGASCAR',
+  'MALAWI',
+  'MALAYSIA',
+  'MALDIVES',
+  'MALI',
+  'MALTA',
+  'MAURITANIA',
+  'MAURITIUS',
+  'MEXICO',
+  'MOLDOVA',
+  'MONACO',
+  'MONGOLIA',
+  'MONTENEGRO',
+  'MONTSERRAT',
+  'MOROCCO',
+  'MOZAMBIQUE',
+  'NAMIBIA',
+  'NEPAL',
+  'NETHERLANDS',
+  'NETHERLANDS ANTILLES',
+  'NEW CALEDONIA',
+  'NEW ZEALAND',
+  'NICARAGUA',
+  'NIGER',
+  'NIGERIA',
+  'NORWAY',
+  'OMAN',
+  'PAKISTAN',
+  'PALESTINE',
+  'PANAMA',
+  'PAPUA NEW GUINEA',
+  'PARAGUAY',
+  'PERU',
+  'PHILIPPINES',
+  'POLAND',
+  'PORTUGAL',
+  'PUERTO RICO',
+  'QATAR',
+  'REUNION',
+  'ROMANIA',
+  'RUSSIA',
+  'RWANDA',
+  'SAINT PIERRE &AMP; MIQUELON',
+  'SAMOA',
+  'SAN MARINO',
+  'SATELLITE',
+  'SAUDI ARABIA',
+  'SENEGAL',
+  'SERBIA',
+  'SEYCHELLES',
+  'SIERRA LEONE',
+  'SINGAPORE',
+  'SLOVAKIA',
+  'SLOVENIA',
+  'SOUTH AFRICA',
+  'SOUTH KOREA',
+  'SPAIN',
+  'SRI LANKA',
+  'ST KITTS &AMP; NEVIS',
+  'ST LUCIA',
+  'ST VINCENT',
+  'ST. LUCIA',
+  'SUDAN',
+  'SURINAME',
+  'SWAZILAND',
+  'SWEDEN',
+  'SWITZERLAND',
+  'SYRIA',
+  'TAIWAN',
+  'TAJIKISTAN',
+  'TANZANIA',
+  'THAILAND',
+  "TIMOR L'ESTE",
+  'TOGO',
+  'TONGA',
+  'TRINIDAD &AMP; TOBAGO',
+  'TUNISIA',
+  'TURKEY',
+  'TURKMENISTAN',
+  'TURKS &AMP; CAICOS',
+  'UGANDA',
+  'UKRAINE',
+  'UNITED ARAB EMIRATES',
+  'UNITED KINGDOM',
+  'URUGUAY',
+  'UZBEKISTAN',
+ 'VENEZUELA',
+  'VIETNAM',
+  'VIRGIN ISLANDS (US)',
+  'YEMEN',
+  'ZAMBIA',
+  'ZIMBABWE']
+		if (!country_list.includes(country.toUpperCase())){
+			this.setState({
+				errors: {country: "Did you misspell this?"}, 
+				loading: false
+			})
+			return
+		}
 		const newUserData = {
-			firstName: this.state.firstName,
-			lastName: this.state.lastName,
-			phoneNumber: this.state.phoneNumber,
-			country: this.state.country,
-			username: this.state.username,
-			email: this.state.email,
-			password: this.state.password,
-			confirmPassword: this.state.confirmPassword
+			firstName,
+			lastName,
+			phoneNumber: num,
+			country,
+			storename,
+			email,
+			password,
+			confirmPassword
 		};
+		// console.log(newUserData);
+		// return
 		axios
 			.post('/signup', newUserData)
 			.then((response) => {
@@ -88,7 +314,7 @@ class signUp extends Component {
 				this.setState({ 
 					loading: false,
 				});	
-				this.props.history.push('/');
+				this.props.history.push('/login');
 			})
 			.catch((error) => {
 				this.setState({
@@ -121,7 +347,7 @@ class signUp extends Component {
 									id="firstName"
 									label="First Name"
 									name="firstName"
-									autoComplete="firstName"
+									autoComplete="first name"
 									helperText={errors.firstName}
 									error={errors.firstName ? true : false}
 									onChange={this.handleChange}
@@ -135,7 +361,7 @@ class signUp extends Component {
 									id="lastName"
 									label="Last Name"
 									name="lastName"
-									autoComplete="lastName"
+									autoComplete="last name"
 									helperText={errors.lastName}
 									error={errors.lastName ? true : false}
 									onChange={this.handleChange}
@@ -147,12 +373,12 @@ class signUp extends Component {
 									variant="outlined"
 									required
 									fullWidth
-									id="username"
-									label="User Name"
-									name="username"
-									autoComplete="username"
-									helperText={errors.username}
-									error={errors.username ? true : false}
+									id="storename"
+									label="Store Name"
+									name="storename"
+									autoComplete="store name"
+									helperText={errors.storename}
+									error={errors.storename ? true : false}
 									onChange={this.handleChange}
 								/>
 							</Grid>
@@ -165,7 +391,7 @@ class signUp extends Component {
 									id="phoneNumber"
 									label="Phone Number"
 									name="phoneNumber"
-									autoComplete="phoneNumber"
+									autoComplete="tel"
 									pattern="[7-9]{1}[0-9]{9}"
 									helperText={errors.phoneNumber}
 									error={errors.phoneNumber ? true : false}
@@ -212,7 +438,7 @@ class signUp extends Component {
 									label="Password"
 									type="password"
 									id="password"
-									autoComplete="current-password"
+									autoComplete="password"
 									helperText={errors.password}
 									error={errors.password ? true : false}
 									onChange={this.handleChange}
@@ -227,7 +453,7 @@ class signUp extends Component {
 									label="Confirm Password"
 									type="password"
 									id="confirmPassword"
-									autoComplete="current-password"
+									autoComplete="password"
 									onChange={this.handleChange}
 								/>
 							</Grid>
@@ -245,7 +471,7 @@ class signUp extends Component {
                                 !this.state.firstName || 
                                 !this.state.lastName ||
                                 !this.state.country || 
-                                !this.state.username || 
+                                !this.state.storename || 
                                 !this.state.phoneNumber}
 						>
 							Sign Up

@@ -6,6 +6,7 @@ const firebase = require('firebase');
 // firebase.initializeApp(config);
 
 const { validateLoginData, validateSignUpData } = require('../util/validators');
+const { response } = require('express');
 
 // Login
 exports.loginUser = (request, response) => {
@@ -36,12 +37,13 @@ exports.signUpUser = (request, response) => {
     const newUser = {
         firstName: request.body.firstName,
         lastName: request.body.lastName,
-        email: request.body.email,
+        storename: request.body.storename,
         phoneNumber: request.body.phoneNumber,
+        email: request.body.email,
         country: request.body.country,
 		password: request.body.password,
 		confirmPassword: request.body.confirmPassword,
-		username: request.body.username
+        actvated: false
     };
 
     const { valid, errors } = validateSignUpData(newUser);
@@ -49,13 +51,17 @@ exports.signUpUser = (request, response) => {
 	if (!valid) return response.status(400).json(errors);
 
     let token, userId;
+
     db
-        .doc(`/users/${newUser.username}`)
+        .doc(`/storenames/${newUser.storename}`)
         .get()
         .then((doc) => {
             if (doc.exists) {
-                return response.status(400).json({ username: 'this username is already taken' });
+                throw { code: 'storename-error' }
             } else {
+                db
+                    .doc(`/storenames/${newUser.storename}`)
+                    .set({store: newUser.storename})
                 return firebase
                         .auth()
                         .createUserWithEmailAndPassword(
@@ -73,16 +79,18 @@ exports.signUpUser = (request, response) => {
             const userCredentials = {
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,
-                username: newUser.username,
                 phoneNumber: newUser.phoneNumber,
                 country: newUser.country,
                 email: newUser.email,
+                storename: newUser.storename,
                 categories: [],
+                actvated: false,
                 createdAt: new Date().toISOString(),
+                username: userId,
                 userId
             };
             return db
-                    .doc(`/users/${newUser.username}`)
+                    .doc(`/users/${userId}`)
                     .set(userCredentials);
         })
         .then(()=>{
@@ -92,7 +100,9 @@ exports.signUpUser = (request, response) => {
 			console.error(err);
 			if (err.code === 'auth/email-already-in-use') {
 				return response.status(400).json({ email: 'Email already in use' });
-			} else {
+			}else if (err.code === 'storename-error' ){
+                return response.status(400).json({ storename: 'This storename already exists' });
+            } else {
 				return response.status(500).json({ general: 'Something went wrong, please try again' });
 			}
 		});
@@ -178,15 +188,53 @@ exports.getUserDetail = (request, response) => {
 }
 
 exports.updateUserDetails = (request, response) => {
+    
+    db
+        .doc(`/users/${request.user.username}`)
+        .get()
+        .then(async (userdoc) => {
+            let doc = await db.doc(`/storenames/${request.body.storename}`).get()
+            if (doc.exists && request.body.storename !== userdoc.data().storename) {
+                throw { code: 'storename-error' }
+            } else {
+                db
+                    .doc(`/storenames/${request.body.storename}`)
+                    .set({store: request.body.storename})
+            }
+
+        })
+        .then(() => {
+            let document = db.collection('users').doc(`${request.user.username}`);
+            document.update(request.body)
+        })
+        .then(()=> {
+            response.json({message: 'Updated successfully'});
+        })
+        .catch((error) => {
+            console.error(error);
+            if (error.code === 'storename-error' ){
+                return response.status(400).json({ storename: 'This storename already exists' });
+            }
+            return response.status(500).json({ 
+                message: "Cannot Update the value"
+            });
+        });
+}
+
+exports.activateUser = (request, response) => {
+
+    console.log(request.user)
     let document = db.collection('users').doc(`${request.user.username}`);
-    document.update(request.body)
+
+    // return 
+    document.update({activated: true})
     .then(()=> {
-        response.json({message: 'Updated successfully'});
+        response.json({message: 'Activated'});
     })
     .catch((error) => {
         console.error(error);
         return response.status(500).json({ 
-            message: "Cannot Update the value"
+            message: "Cannot Activate"
         });
     });
 }
