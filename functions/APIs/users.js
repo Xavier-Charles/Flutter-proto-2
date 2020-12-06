@@ -198,8 +198,13 @@ exports.updateUserDetails = (request, response) => {
                 throw { code: 'storename-error' }
             } else {
                 db
-                    .doc(`/storenames/${request.body.storename}`)
-                    .set({store: request.body.storename})
+                    .doc(`/storenames/${userdoc.data().storename}`)
+                    .delete()
+                    .then(() =>{
+                        db
+                            .doc(`/storenames/${request.body.storename}`)
+                            .set({store: request.body.storename})
+                    })
             }
 
         })
@@ -262,7 +267,7 @@ exports.getStore = (request, response) => {
                         let data;
                         doc.forEach(doc => {
                             data = doc.data()
-                            console.log(data);
+                            // console.log(data);
                         })
                         return response.json(data)
                     })
@@ -271,10 +276,10 @@ exports.getStore = (request, response) => {
         .catch((error) => {
             console.error(error);
             if (error.code === 'storename-error' ){
-                return response.status(200).json({ message: 'This store does not exist' });
+                return response.status(500).json({ message: 'This store does not exist' });
             }
             return response.status(500).json({ 
-                message: "Cannot Activate"
+                message: "Internal error"
             });
         });
             
