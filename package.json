@@ -48,7 +48,7 @@
       "last 1 safari version"
     ]
   },
-    "proxy": "http://localhost:5001/jedi-proto-1/europe-west3/api"
+     "proxy": "https://europe-west3-jedi-proto-1.cloudfunctions.net/api"
 
 }
 

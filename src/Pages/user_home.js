@@ -41,11 +41,11 @@ function Home(props) {
         axios
           .get(`/store/${storename}`)
           .then((response) => {
-
+            // console.log(response)
             if (response.data.activated === false && props.type === 'store') {
               props.history.push('/notfound');
             }
-            console.log(response.data);
+            // console.log(response.data);
             setData({
               firstName: response.data.firstName,
               lastName: response.data.lastName,
@@ -53,15 +53,14 @@ function Home(props) {
               phoneNumber: `+${response.data.phoneNumber}`,
               country: response.data.country,
               storename: response.data.storename,
+              categories: response.data.categories,
               activated: response.data.activated,
               uiLoading: false
             })
           })
           .catch(error => {
-            console.log(error)
-            if (error.message === 'This store does not exist') {
-              props.history.push('/notfound');
-            }
+            console.log(error.message)
+            props.history.push('/notfound');
           })
     }, [])
 
@@ -74,7 +73,7 @@ function Home(props) {
     }else
     return(
         <React.Fragment>
-            <Nav storename={storename}/>
+            <Nav/>
             <HeaderCarousel/>
               <QuoteBox top={true} title="RESPONSIBLY MADE FOR THE LONG HAUL" text="We’re challenging the way the 
                           clothing industry operates. The way we source. The way we sew. The way we sell."/>

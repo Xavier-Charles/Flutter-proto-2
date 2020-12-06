@@ -5,23 +5,24 @@ import Account from '../Components/account';
 import Nav from '../Components/dashboardnav';
 import Products from '../Components/user_products';
 
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+// import Drawer from '@material-ui/core/Drawer';
+// import AppBar from '@material-ui/core/AppBar';
+// import CssBaseline from '@material-ui/core/CssBaseline';
+// import Toolbar from '@material-ui/core/Toolbar';
+// import List from '@material-ui/core/List';
+// import Typography from '@material-ui/core/Typography';
+// import Divider from '@material-ui/core/Divider';
+// import ListItem from '@material-ui/core/ListItem';
+// import ListItemIcon from '@material-ui/core/ListItemIcon';
+// import ListItemText from '@material-ui/core/ListItemText';
 import withStyles from '@material-ui/core/styles/withStyles';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import NotesIcon from '@material-ui/icons/Notes';
-import Avatar from '@material-ui/core/avatar';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+// import AccountBoxIcon from '@material-ui/icons/AccountBox';
+// import NotesIcon from '@material-ui/icons/Notes';
+// import Avatar from '@material-ui/core/avatar';
+// import VisibilityIcon from '@material-ui/icons/Visibility';
+// import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { Link, withRouter } from 'react-router-dom';
 
 import { authMiddleWare } from '../util/auth'
 
@@ -105,7 +106,7 @@ class Dashboard extends Component {
 		axios
 			.get('/user')
 			.then((response) => {
-				console.log(response);
+				// console.log(response);
 				this.setState({
 					firstName: response.data.userCredentials.firstName,
 					lastName: response.data.userCredentials.lastName,
@@ -219,4 +220,4 @@ class Dashboard extends Component {
 	}
 }
 
-export default withStyles(styles)(Dashboard);
+export default withStyles(styles)(withRouter(Dashboard));

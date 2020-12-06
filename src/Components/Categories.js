@@ -14,20 +14,24 @@ import img4 from '../assets/Categories/44.jpg'
 
 function CategoriesBox(props) {
 
-    const AutoplaySlider = withAutoplay(AwesomeSlider);
+    // const AutoplaySlider = withAutoplay(AwesomeSlider);
     // Declare a new state variable with the "useState" Hook
-    const [width, setWidth] = React.useState(window.innerWidth);
-    const breakpoint = 620;
+    // const [width, setWidth] = React.useState(window.innerWidth);
+    // const breakpoint = 620;
 
-    React.useEffect(() => {
-        /* Inside of a "useEffect" hook add an event listener that updates
-        the "width" state variable when the window size changes */
-        window.addEventListener("resize", () => setWidth(window.innerWidth));
+    let home = props.location.pathname.includes('store') ? 
+		`/store/${props.match.params.storename}`:
+		`/preview/${props.match.params.storename}`
 
-        /* passing an empty array as the dependencies of the effect will cause this
-        effect to only run when the component mounts, and not each time it updates.
-        We only want the listener to be added once */
-    }, [])
+    // React.useEffect(() => {
+    //     /* Inside of a "useEffect" hook add an event listener that updates
+    //     the "width" state variable when the window size changes */
+    //     window.addEventListener("resize", () => setWidth(window.innerWidth));
+
+    //     /* passing an empty array as the dependencies of the effect will cause this
+    //     effect to only run when the component mounts, and not each time it updates.
+    //     We only want the listener to be added once */
+    // }, [])
 
     return (
         <CategoriesBoxStyle>
@@ -38,7 +42,7 @@ function CategoriesBox(props) {
                         <img src={img1}></img>
                         
                         <div className="textbox">
-                            <Link to="/categorised/bags" className="title">
+                            <Link to={home + "/categorised/bags"} className="title">
                                 Bags
                             </Link>
                         </div>
@@ -50,7 +54,7 @@ function CategoriesBox(props) {
                         <img src={img2}></img>
                         
                         <div className="textbox">
-                            <Link to="/categorised/accessories" className="title">
+                            <Link to={home + "/categorised/accessories"} className="title">
                                 Accessories
                             </Link>
                         </div>
@@ -62,7 +66,7 @@ function CategoriesBox(props) {
                         <img src={img3}></img>
                         
                          <div className="textbox">
-                            <Link to="/categorised/shoes" className="title">
+                            <Link to={home + "/categorised/shoes"} className="title">
                                 Shoes
                             </Link>
                         </div>
@@ -74,8 +78,8 @@ function CategoriesBox(props) {
                         <img src={img4}></img>
 
                          <div className="textbox">
-                            <Link to="/categorised/shirts" className="title">
-                                Shirts
+                            <Link to={home + "/categorised/tops"} className="title">
+                                Tops
                             </Link>
                         </div>
     

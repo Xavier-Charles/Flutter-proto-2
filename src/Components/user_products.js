@@ -30,7 +30,8 @@ import ProductCard from './productCard'
 const styles = (theme) => ({
 	content: {
 		flexGrow: 1,
-		padding: theme.spacing(3)
+		// padding: theme.spacing(3)
+		paddingLeft: '2%'
 	},
 	appBar: {
 		position: 'relative'
@@ -104,9 +105,6 @@ const styles = (theme) => ({
 		marginLeft: '8px',
 		margin: theme.spacing(1)
 	},
-	pad: {
-		marginLeft: '-22px'
-	}
 });
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -165,7 +163,7 @@ class Products extends Component {
 	};
 
 	deleteProductHandler(data) {
-		console.log(data)
+		// console.log(data)
 		authMiddleWare(this.props.history);
 		const authToken = localStorage.getItem('AuthToken');
 		axios.defaults.headers.common = { Authorization: `${authToken}` };
@@ -180,12 +178,13 @@ class Products extends Component {
 	}
 
 	handleEditClickOpen(data) {
-		console.log(data)
+		// console.log(data)
 		this.setState({
 			name: data.name,
             img: data.img,
             description: data.description,
-            price: data.price,
+			price: data.price,
+			category: data.category,
 			productId: data.productId,
 			buttonType: 'Edit',
 			open: true
@@ -272,7 +271,7 @@ class Products extends Component {
 		const handleSubmit = (event) => {
 
 			let state = this.state
-			if (formImage === null){
+			if (formImage === null && state.buttonType !== 'Edit'){
 				this.setState({errors: {...errors, formImage: 'Your product has no image'}})
 				return
 			}
@@ -482,44 +481,15 @@ class Products extends Component {
 
 					<Grid container spacing={2}>
 						{this.state.products.map((product, id) => (
-							<Grid className={classes.space} item xs={12} sm={6}>
-								{/* <Card className={classes.root} variant="outlined">
-									<CardContent>
-										<Typography variant="h5" component="h2">
-											{product.name}
-										</Typography>
-										<Typography className={classes.pos} color="textSecondary">
-											{dayjs(product.createdAt).fromNow()}
-										</Typography>
-										<Typography variant="img2" component="p">
-											{`${product.description.substring(0, 65)}`}
-										</Typography>
-									</CardContent>
-									<CardActions>
-										<Button size="small" color="primary" onClick={() => this.handleViewOpen({ product })}>
-											{' '}
-											View{' '}
-										</Button>
-										<Button size="small" color="primary" onClick={() => this.handleEditClickOpen({ product })}>
-											Edit
-										</Button>
-										<Button size="small" color="primary" onClick={() => this.deleteProductHandler({ product })}>
-											Delete
-										</Button>
-									</CardActions>
-								</Card> */}
-								<div className={classes.pad}>
-									<ProductCard 
-									data={product} 
-									type="dashboard"
-									key={id} 
-									// onClick={() => this.handleViewOpen({ product })}
-									Edit={this.handleEditClickOpen}
-									Delete={this.deleteProductHandler}
-								/>
-								</div>
-								
-							</Grid>
+
+							<ProductCard 
+								data={product} 
+								type="dashboard"
+								key={id} 
+								Edit={this.handleEditClickOpen}
+								Delete={this.deleteProductHandler}
+							/>
+
 						))}
 					</Grid>
 

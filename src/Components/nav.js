@@ -30,6 +30,11 @@ function Nav (props)  {
 	const [width, setWidth] = useState(window.innerWidth);
 	const [navOpen, setNavOpen] = useState(false);
 
+	let storename = props.match.params.storename
+	let home = props.location.pathname.includes('store') ? 
+		`/store/${storename}`:
+		`/preview/${storename}`
+
     
 
     useEffect(() => {
@@ -48,8 +53,8 @@ function Nav (props)  {
         <NavStyle>
 			<div className={scrollPosY === 0 ? "noScroll" : "onScroll"}>
 				<div className="Nav-brand">
-					<Link className="Nav-brand-logo" to="/">
-						Fyrozine
+					<Link className="Nav-brand-logoless" to={home}>
+						{storename.charAt().toUpperCase()+storename.slice(1).toLowerCase()}
 					</Link>
 
 					<div id="menuToggle" className={width > 620 ? 'menuLarge': navOpen ? 'navOpen' : ''}>
@@ -63,16 +68,17 @@ function Nav (props)  {
 						)}
 						<ul id="menu">
 							<li>
-								<HLink smooth to="/#contact">Contact</HLink>
+								<HLink smooth to={home + "#contact"}>Contact</HLink>
 							</li>
 							<li>
-								<HLink smooth to="/#wrapper">Categories</HLink>
+								<HLink smooth to={home + "#wrapper"}>Categories</HLink>
+								{/* {console.log(props)} */}
 							</li>
 							{/* <li>
 								<Link to="/about">About</Link>
 							</li> */}
 							<li>
-								<Link to="/products">New products</Link>
+								<Link to={home + "/products"}>New products</Link>
 							</li>
 							{/* <li>
 								<Link to="/your/closet">Your Closet</Link>
@@ -126,6 +132,17 @@ const NavStyle = styled.nav`
 		width: 200px;
 		text-indent: -1000%;
 		-webkit-tap-highlight-color: transparent;
+	}
+	.Nav-brand-logoless {
+		display: block;
+        text-decoration: none;
+        color: #1e1e23;
+        opacity: 1;
+        font-family: Roboto;
+        font-size: 1.70em;
+        font-weight: 300;
+        margin: 8px;
+		margin-left: 1.3em;
 	}
 
 	.menuLarge {

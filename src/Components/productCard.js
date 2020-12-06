@@ -143,13 +143,14 @@ const PostStyle = styled.div`
         visibility: visible;
         opacity: 1;
         pointer-events: auto;
+        overflow-y: scroll;
     }
     .modal-window > div {
         position: absolute;
-        top: 50%;
+        top: 10%;
         left: 50%;
-        -webkit-transform: translate(-50%, -50%);
-                transform: translate(-50%, -50%);
+        -webkit-transform: translateX(-50%);
+                transform: translateX(-50%);
         background: #fff;
         min-width: 300px;
         min-height: 330px;

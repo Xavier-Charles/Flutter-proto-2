@@ -6,10 +6,17 @@ import logo from '../assets/frozlintell.png'
 
 function Footer(props) {
 
+    let storename = props.match.params.storename
+	let home = props.location.pathname.includes('store') ? 
+		`/store/${storename}`:
+		`/preview/${storename}`
+
     return (
         <Styled>
             <div className="textbox">
-                <Link className="Nav-brand-logo" to="/">Fyrozine</Link>
+                <Link className="Nav-brand-logoless" to="/">
+                    {storename.charAt().toUpperCase()+storename.slice(1).toLowerCase()}
+                </Link>
                 <input type="email" class="long" placeholder="Email Address"></input>
                 <button type="submit" class="fill">{'>'}</button>
                 <p className="text">Recieve 20% off your first purchase</p>
@@ -56,6 +63,17 @@ const Styled = styled.div`
 		width: 200px;
 		text-indent: -1000%;
 		-webkit-tap-highlight-color: transparent;
+	}
+    .Nav-brand-logoless {
+		display: block;
+        text-decoration: none;
+        color: #1e1e23;
+        opacity: 1;
+        font-family: Roboto;
+        font-size: 1.70em;
+        font-weight: 300;
+        margin: 27px 0 41px 0;
+		/* margin-left: 1.3em; */
 	}
 
     .textbox {

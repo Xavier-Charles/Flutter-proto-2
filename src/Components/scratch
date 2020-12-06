@@ -366,3 +366,47 @@ const Navbar = styled.nav`
 		list-style-type: none;
 	}
 `;
+
+
+<Grid container spacing={2}>
+						{this.state.products.map((product, id) => (
+							<Grid className={classes.space} item xs={12} sm={6}>
+								{/* <Card className={classes.root} variant="outlined">
+									<CardContent>
+										<Typography variant="h5" component="h2">
+											{product.name}
+										</Typography>
+										<Typography className={classes.pos} color="textSecondary">
+											{dayjs(product.createdAt).fromNow()}
+										</Typography>
+										<Typography variant="img2" component="p">
+											{`${product.description.substring(0, 65)}`}
+										</Typography>
+									</CardContent>
+									<CardActions>
+										<Button size="small" color="primary" onClick={() => this.handleViewOpen({ product })}>
+											{' '}
+											View{' '}
+										</Button>
+										<Button size="small" color="primary" onClick={() => this.handleEditClickOpen({ product })}>
+											Edit
+										</Button>
+										<Button size="small" color="primary" onClick={() => this.deleteProductHandler({ product })}>
+											Delete
+										</Button>
+									</CardActions>
+								</Card> */}
+								<div className={classes.pad}>
+									<ProductCard 
+									data={product} 
+									type="dashboard"
+									key={id} 
+									// onClick={() => this.handleViewOpen({ product })}
+									Edit={this.handleEditClickOpen}
+									Delete={this.deleteProductHandler}
+								/>
+								</div>
+								
+							</Grid>
+						))}
+					</Grid>

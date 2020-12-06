@@ -58,7 +58,7 @@ export default function Products(props) {
     
     // console.log(ProductData)
 
-    if (props.type === 'categorised') {
+    if (props.categorised === true) {
         console.log(ProductData);
         return(
             <PostStyle>
