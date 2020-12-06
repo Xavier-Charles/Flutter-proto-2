@@ -44,7 +44,7 @@ const styles = (theme) => ({
 		zIndex: '1000',
 		height: '31px',
 		width: '31px',
-		left: '50%',
+		left: '46%',
 		top: '35%'
 	},
 	progess: {
@@ -133,26 +133,28 @@ class account extends Component {
 		this.setState({
 			uiLoading: true
 		});
-		authMiddleWare(this.props.history);
-		const authToken = localStorage.getItem('AuthToken');
-		axios.defaults.headers.common = { Authorization: `${authToken}` };
-		axios
-			.post('/user/activate')
-			.then((res) => {
-				console.log(res)
-			})
-			.then(() => {
-				window.location.reload();
-			})
-			.catch((error) => {
-				if (error.response.status === 403) {
-					this.props.history.push('/login');
-				}
-				console.log(error);
-				this.setState({
-					buttonLoading: false
-				});
-			});
+		window.location.assign('https://paystack.com/pay/activate-store')
+
+		// authMiddleWare(this.props.history);
+		// const authToken = localStorage.getItem('AuthToken');
+		// axios.defaults.headers.common = { Authorization: `${authToken}` };
+		// axios
+		// 	.post('/user/activate')
+		// 	.then((res) => {
+		// 		console.log(res)
+		// 	})
+		// 	.then(() => {
+		// 		window.location.reload();
+		// 	})
+		// 	.catch((error) => {
+		// 		if (error.response.status === 403) {
+		// 			this.props.history.push('/login');
+		// 		}
+		// 		console.log(error);
+		// 		this.setState({
+		// 			buttonLoading: false
+		// 		});
+		// 	});
 	}
 
 	profilePictureHandler = (event) => {
@@ -444,7 +446,7 @@ class account extends Component {
 			return (
 				<main className={classes.content}>
 					<div className={classes.toolbar} />
-					{this.state.uiLoading && <CircularProgress size={150} className={classes.uiProgess} />}
+					{this.state.uiLoading && <CircularProgress size={50} className={classes.uiProgess} />}
 				</main>
 			);
 		} else {

@@ -4,13 +4,15 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
+import MuiLink from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
+
+import { Link, withRouter } from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -42,7 +44,7 @@ const styles = (theme) => ({
 	}
 });
 
-class login extends Component {
+class Login extends Component {
 	constructor(props) {
 		super(props);
 
@@ -84,11 +86,12 @@ class login extends Component {
 				});		
 				this.props.history.push('/account');
 			})
-			.catch((error) => {				
-				this.setState({
-					errors: error.response.data,
-					loading: false
-				});
+			.catch((error) => {	
+				console.log(error)			
+				// this.setState({
+				// 	errors: error.response.data? error.response.data: error,
+				// 	loading: false
+				// });
 			});
 	};
 
@@ -148,9 +151,9 @@ class login extends Component {
 						</Button>
 						<Grid container>
 							<Grid item>
-								<Link href="signup" variant="body2">
+								<MuiLink href="signup" variant="body2">
 									{"Don't have an account? Sign Up"}
-								</Link>
+								</MuiLink>
 							</Grid>
 						</Grid>
 						{errors.general && (
@@ -165,4 +168,5 @@ class login extends Component {
 	}
 }
 
-export default withStyles(styles)(login);
+export default withStyles(styles)(withRouter(Login));
+

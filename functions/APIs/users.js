@@ -238,3 +238,44 @@ exports.activateUser = (request, response) => {
         });
     });
 }
+
+exports.getStore = (request, response) => {
+
+    // console.log(request.params.storename)
+    // return response.status(500).json({ 
+    //         message: "Testing"
+    //     })
+    
+    db
+        .doc(`/storenames/${request.params.storename}`)
+        .get()
+        .then((doc) => {
+            if (!doc.exists) {
+                throw { code: 'storename-error' }
+            } else {
+                db
+                    .collection(`/users`)
+                    .where("storename", "==", request.params.storename)
+                    .limit(1)
+                    .get()
+                    .then((doc) => {
+                        let data;
+                        doc.forEach(doc => {
+                            data = doc.data()
+                            console.log(data);
+                        })
+                        return response.json(data)
+                    })
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            if (error.code === 'storename-error' ){
+                return response.status(200).json({ message: 'This store does not exist' });
+            }
+            return response.status(500).json({ 
+                message: "Cannot Activate"
+            });
+        });
+            
+}

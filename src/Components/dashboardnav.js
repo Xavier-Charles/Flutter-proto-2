@@ -3,7 +3,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { HashLink as HLink} from 'react-router-hash-link';
 
 import styled from 'styled-components';
-import logo from '../assets/frozlintell.png'
 
 
 
@@ -46,10 +45,10 @@ function Nav (props)  {
 
     return (
         <NavStyle>
-			<div className={scrollPosY === 0 ? "noScroll" : "onScroll"}>
+			<div className="Nav">
 				<div className="Nav-brand">
 					<Link className="Nav-brand-logo" to="/">
-						Fyrozine
+						{props.storename.charAt().toUpperCase()+props.storename.slice(1).toLowerCase()}
 					</Link>
 
 					<div id="menuToggle" className={width > 620 ? 'menuLarge': navOpen ? 'navOpen' : ''}>
@@ -62,25 +61,19 @@ function Nav (props)  {
 							</div>
 						)}
 						<ul id="menu">
-							<li>
-								<HLink smooth to="/#contact">Contact</HLink>
-							</li>
-							<li>
-								<HLink smooth to="/#wrapper">Categories</HLink>
-							</li>
-							{/* <li>
-								<Link to="/about">About</Link>
-							</li> */}
-							<li>
-								<Link to="/products">New products</Link>
-							</li>
-							{/* <li>
-								<Link to="/your/closet">Your Closet</Link>
-							</li>
-							<li>
-								<Link to="/your/collection">Contact Us</Link>
-							</li> */}
 
+							<li>
+								<Link onClick={() => {props.handlers.product()}}>Products</Link>
+							</li>
+                            <li>
+								<Link onClick={() => props.handlers.account()}>Account</Link>
+							</li>
+                            <li>
+								<Link onClick={() => props.handlers.preview()}>Preview</Link>
+							</li>
+                            <li>
+								<Link onClick={() => props.handlers.logout()}>Logout</Link>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -108,9 +101,9 @@ const NavStyle = styled.nav`
 	.noScroll{
 		background-color: #fff0;
 	}
-	.onScroll {
+	.Nav {
 		border-bottom: 1px solid;
-		background-color: #fff;
+		background-color: #bec4ff;
     	opacity: 0.9;
 	}
 	.Nav-brand {
@@ -118,13 +111,14 @@ const NavStyle = styled.nav`
 	}
 	.Nav-brand-logo {
 		display: block;
-		background-position: 15px 12px;
-		background-image: url(${logo}); 
-		background-size: 120px 26px;
-		background-repeat: no-repeat;
-		height: 49px;
-		width: 200px;
-		text-indent: -1000%;
+        text-decoration: none;
+        color: #1e1e23;
+        opacity: 1;
+        font-family: Roboto;
+        font-size: 1.75em;
+        font-weight: 500;
+        margin: 8px;
+		margin-left: 1.3em;
 		-webkit-tap-highlight-color: transparent;
 	}
 

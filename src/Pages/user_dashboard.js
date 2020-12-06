@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import Account from '../Components/account';
-// import Products from '../Components/products';
+import Nav from '../Components/dashboardnav';
 import Products from '../Components/user_products';
 
 import Drawer from '@material-ui/core/Drawer';
@@ -19,6 +19,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import NotesIcon from '@material-ui/icons/Notes';
 import Avatar from '@material-ui/core/avatar';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -56,7 +57,7 @@ const styles = (theme) => ({
 		zIndex: '1000',
 		height: '31px',
 		width: '31px',
-		left: '50%',
+		left: '46%',
 		top: '35%'
 	},
 	toolbar: theme.mixins.toolbar
@@ -71,7 +72,7 @@ class Dashboard extends Component {
 		this.setState({ render: true });
 	};
 
-	loadTodoPage = (event) => {
+	loadProductsPage = (event) => {
 		this.setState({ render: false });
 	};
 
@@ -79,6 +80,11 @@ class Dashboard extends Component {
 		localStorage.removeItem('AuthToken');
 		this.props.history.push('/login');
 	};
+
+	previewHandler =(event) => {
+		// window.open(`https://fyr.biz/store/${this.state.storename}`, "_blank")
+		window.open(`http://localhost:3000/preview/${this.state.storename}`, "_blank")
+	}
 
 	constructor(props) {
 		super(props);
@@ -108,6 +114,7 @@ class Dashboard extends Component {
 					country: response.data.userCredentials.country,
 					username: response.data.userCredentials.username,
 					categories: response.data.userCredentials.categories,
+					storename: response.data.userCredentials.storename,
 					uiLoading: false,
 					profilePicture: response.data.userCredentials.imageUrl
 				});
@@ -123,25 +130,37 @@ class Dashboard extends Component {
 	};
 
 	render() {
-		const { classes } = this.props;		
+		const { classes } = this.props;	
+		// return (
+		// 		<div className={classes.root}>
+		// 			{<CircularProgress size={50} className={classes.uiProgess} />}
+		// 		</div>
+		// 	);
+		
 		if (this.state.uiLoading === true) {
 			return (
 				<div className={classes.root}>
-					{this.state.uiLoading && <CircularProgress size={150} className={classes.uiProgess} />}
+					{this.state.uiLoading && <CircularProgress size={50} className={classes.uiProgess} />}
 				</div>
 			);
 		} else {
 			return (
 				<div className={classes.root}>
-					<CssBaseline />
-					<AppBar position="fixed" className={classes.appBar}>
+					{/* <CssBaseline /> */}
+					{/* <AppBar position="fixed" className={classes.appBar}>
 						<Toolbar>
 							<Typography variant="h6" noWrap>
-								TodoApp
+								{this.state.storename.charAt().toUpperCase()+this.state.storename.slice(1).toLowerCase()}
 							</Typography>
 						</Toolbar>
-					</AppBar>
-					<Drawer
+					</AppBar> */}
+					<Nav storename={this.state.storename} handlers={{
+						product: this.loadProductsPage,
+						account: this.loadAccountPage,
+						preview: this.previewHandler,
+						logout: this.logoutHandler
+					}}/>
+					{/* <Drawer
 						className={classes.drawer}
 						variant="permanent"
 						classes={{
@@ -159,12 +178,12 @@ class Dashboard extends Component {
 						</center>
 						<Divider />
 						<List>
-							<ListItem button key="Todo" onClick={this.loadTodoPage}>
+							<ListItem button key="Products" onClick={this.loadProductsPage}>
 								<ListItemIcon>
 									{' '}
 									<NotesIcon />{' '}
 								</ListItemIcon>
-								<ListItemText primary="Todo" />
+								<ListItemText primary="Products" />
 							</ListItem>
 
 							<ListItem button key="Account" onClick={this.loadAccountPage}>
@@ -182,8 +201,16 @@ class Dashboard extends Component {
 								</ListItemIcon>
 								<ListItemText primary="Logout" />
 							</ListItem>
+
+							<ListItem button key="Preview" onClick={this.previewHandler}>
+								<ListItemIcon>
+									{' '}
+									<VisibilityIcon />{' '}
+								</ListItemIcon>
+								<ListItemText primary="Preview" />
+							</ListItem>
 						</List>
-					</Drawer>
+					</Drawer> */}
 
 					<div>{this.state.render ? <Account /> : <Products categories={this.state.categories} />}</div>
 				</div>

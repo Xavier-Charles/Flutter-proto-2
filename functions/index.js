@@ -4,7 +4,7 @@ const {
     getAllProducts, getOneProduct, postOneProduct, deleteProduct, editProduct
 } = require('./APIs/BKNDproducts')
 const {
-    loginUser, signUpUser, uploadProfilePhoto, getUserDetail, updateUserDetails, activateUser
+    loginUser, signUpUser, uploadProfilePhoto, getUserDetail, updateUserDetails, activateUser, getStore
 } = require('./APIs/users')
 const auth = require('./util/auth');
 
@@ -28,11 +28,14 @@ app.put('/product/:productId', auth, editProduct);
 
 app.post('/login', loginUser);
 app.post('/signup', signUpUser);
+
+app.get('/store/:storename', getStore);
+
 app.post('/user/image', auth, uploadProfilePhoto);
 app.get('/user', auth, getUserDetail);
 app.post('/user', auth, updateUserDetails);
-
 app.post('/user/activate', auth, activateUser)
+
 exports.api = functions.region('europe-west3').https.onRequest(app);
 // exports.apiz = functions.region('europe-west3').https.onRequest(app);
 

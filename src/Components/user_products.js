@@ -41,7 +41,7 @@ const styles = (theme) => ({
 	},
 	space: {
 		margin: '5px',
-		maxWidth: '300px'
+		maxWidth: '250px'
 	},
 	submitButton: {
 		display: 'block',
@@ -79,7 +79,7 @@ const styles = (theme) => ({
 		zIndex: '1000',
 		height: '31px',
 		width: '31px',
-		left: '50%',
+		left: '46%',
 		top: '35%'
 	},
 	dialogeStyle: {
@@ -103,6 +103,9 @@ const styles = (theme) => ({
     uploadButton: {
 		marginLeft: '8px',
 		margin: theme.spacing(1)
+	},
+	pad: {
+		marginLeft: '-22px'
 	}
 });
 
@@ -332,7 +335,7 @@ class Products extends Component {
 			return (
 				<main className={classes.content}>
 					<div className={classes.toolbar} />
-					{this.state.uiLoading && <CircularProgress size={150} className={classes.uiProgess} />}
+					{this.state.uiLoading && <CircularProgress size={50} className={classes.uiProgess} />}
 				</main>
 			);
 		} else {
@@ -505,7 +508,8 @@ class Products extends Component {
 										</Button>
 									</CardActions>
 								</Card> */}
-								<ProductCard 
+								<div className={classes.pad}>
+									<ProductCard 
 									data={product} 
 									type="dashboard"
 									key={id} 
@@ -513,6 +517,8 @@ class Products extends Component {
 									Edit={this.handleEditClickOpen}
 									Delete={this.deleteProductHandler}
 								/>
+								</div>
+								
 							</Grid>
 						))}
 					</Grid>

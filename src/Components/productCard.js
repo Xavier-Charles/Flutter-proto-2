@@ -9,7 +9,7 @@ export default function Products(props) {
 
     return(
             <PostStyle id={props.id} onClick={(event) => {setViewOpen(!viewOpen)}}>
-                {console.log(delOpen)}
+                {/* {console.log(delOpen)} */}
                 <div className="pic">
                     <img src={props.data.img}></img>
                 </div>
