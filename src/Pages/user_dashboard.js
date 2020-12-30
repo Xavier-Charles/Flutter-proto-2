@@ -22,7 +22,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 // import VisibilityIcon from '@material-ui/icons/Visibility';
 // import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import { authMiddleWare } from '../util/auth'
 
@@ -83,8 +83,7 @@ class Dashboard extends Component {
 	};
 
 	previewHandler =(event) => {
-		// window.open(`https://fyr.biz/store/${this.state.storename}`, "_blank")
-		window.open(`http://localhost:3000/preview/${this.state.storename}`, "_blank")
+		window.open(`${window.location.origin}/preview/${this.state.storename}`, "_blank")
 	}
 
 	constructor(props) {
@@ -103,8 +102,12 @@ class Dashboard extends Component {
 		authMiddleWare(this.props.history);
 		const authToken = localStorage.getItem('AuthToken');
 		axios.defaults.headers.common = { Authorization: `${authToken}` };
+		const urlhandler = (url) => {
+			return process.env.NODE_ENV === "development" ?
+						 url : process.env.REACT_APP_PRODUCTION_URL + url
+		}
 		axios
-			.get('/user')
+			.get(urlhandler('/user'))
 			.then((response) => {
 				// console.log(response);
 				this.setState({
@@ -122,11 +125,11 @@ class Dashboard extends Component {
 			})
 			.catch((error) => {
 				console.log(error);
-				if(error.response.status === 403) {
+				if(error.response) {
 					this.props.history.push('/login')
 				}
-				console.log(error);
 				this.setState({ errorMsg: 'Error in retrieving the data' });
+				this.props.history.push('/login')
 			});
 	};
 
@@ -213,7 +216,10 @@ class Dashboard extends Component {
 						</List>
 					</Drawer> */}
 
-					<div>{this.state.render ? <Account /> : <Products categories={this.state.categories} />}</div>
+					<div>{this.state.render ? 
+									<Account /> : 
+									<Products categories={this.state.categories} store={this.state.storename} />}
+					</div>
 				</div>
 			);
 		}

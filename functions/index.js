@@ -1,5 +1,33 @@
 const functions = require('firebase-functions');
+
+const cors = require('cors');
 const app = require('express')();
+
+let allowedOrigins = ['http://localhost:3000',
+                      'http://127.0.0.1:5001/jedi-proto-1/us-central1/api',
+                      'http://localhost:5001/jedi-proto-1/us-central1/api',
+                      'http://localhost:5000',
+                      'https://fyrozine.com',
+                      'https://jedi-proto-1.web.app',
+                      'https://jedi-proto-1.firebaseapp.com'
+                    ];
+// Automatically allow cross-origin requests
+// app.use(cors({ origin: true }));
+app.use(cors({
+  origin: function(origin, callback){
+
+    // allow requests with no origin (e.g mobile apps, curl requests)
+    if(!origin) return callback(null, true);
+    // console.log(origin)
+    if(allowedOrigins.indexOf(origin) === -1){
+      var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
+
 const {
     getAllProducts, getOneProduct, postOneProduct, deleteProduct, editProduct
 } = require('./APIs/BKNDproducts')
@@ -20,7 +48,7 @@ firebase.initializeApp(config);
 // });
 
 //todo find a way to replace "auth" in get methods
-app.get('/products', auth, getAllProducts);
+app.post('/products', getAllProducts);
 app.get('/products/:productId', auth, getOneProduct);
 app.post('/product', auth, postOneProduct);
 app.delete('/del_product/:productId', auth, deleteProduct);
@@ -36,7 +64,8 @@ app.get('/user', auth, getUserDetail);
 app.post('/user', auth, updateUserDetails);
 app.post('/user/activate', auth, activateUser)
 
-exports.api = functions.region('europe-west3').https.onRequest(app);
-// exports.apiz = functions.region('europe-west3').https.onRequest(app);
+// exports.api = functions.region('europe-west3').https.onRequest(app);
+exports.apiz = functions.https.onRequest(app);
+exports.api = functions.https.onRequest(app);
 
 

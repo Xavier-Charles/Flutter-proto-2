@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { HashLink as HLink} from 'react-router-hash-link';
+// import { HashLink as HLink} from 'react-router-hash-link';
 
 import styled from 'styled-components';
 
@@ -47,7 +47,8 @@ function Nav (props)  {
         <NavStyle>
 			<div className="Nav">
 				<div className="Nav-brand">
-					<Link className="Nav-brand-logo" to="/">
+					<Link className="Nav-brand-logo" to="/account">
+						{/* {console.log(props)} */}
 						{props.storename.charAt().toUpperCase()+props.storename.slice(1).toLowerCase()}
 					</Link>
 
@@ -103,7 +104,7 @@ const NavStyle = styled.nav`
 	}
 	.Nav {
 		border-bottom: 1px solid;
-		background-color: #bec4ff;
+		background-color: #ffdfa2;
     	opacity: 0.9;
 	}
 	.Nav-brand {

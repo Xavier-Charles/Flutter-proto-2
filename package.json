@@ -14,6 +14,7 @@
     "express": "^4.17.1",
     "firebase": "^8.1.1",
     "firebase-admin": "^9.4.1",
+    "firebase-functions": "^3.13.0",
     "react": "^17.0.1",
     "react-awesome-slider": "^4.1.0",
     "react-dom": "^17.0.1",
@@ -48,8 +49,5 @@
       "last 1 safari version"
     ]
   },
-     "proxy": "https://europe-west3-jedi-proto-1.cloudfunctions.net/api"
-
+  "proxy": "http://localhost:5001/jedi-proto-1/us-central1/api"
 }
-
-

@@ -6,23 +6,23 @@ export default function Products(props) {
 
     const [viewOpen, setViewOpen] = useState(false)
     const [delOpen, setDelOpen] = useState(false)
+    // console.log(props.data)
 
     return(
-            <PostStyle id={props.id} onClick={(event) => {setViewOpen(!viewOpen)}}>
-                {/* {console.log(delOpen)} */}
+            <CardStyle id={props.id} onClick={(event) => {setViewOpen(!viewOpen)}}>
                 <div className="pic">
-                    <img src={props.data.img}></img>
+                    <img src={props.data.img} alt=""></img>
                 </div>
                 <div className="buttons">
-                    <a href={props.data.link} className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
+                    <a className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
                     {props.type === 'dashboard' ?(
                                 <React.Fragment>
-                                    <a href={props.data.link} className="contact" link=""><p>Edit</p></a>
-                                    <a href={props.data.link} className="contact" link=""><p>Delete</p></a>
+                                    <a className="contact" link=""><p>Edit</p></a>
+                                    <a className="contact" link=""><p>Delete</p></a>
                                 </React.Fragment>
                                 
                             ): (
-                                <a href={props.data.link} className="contact" link=""><p>I want this!</p></a>
+                                <a className="contact" link=""><p>I want this!</p></a>
                             )}
                 </div>
 
@@ -38,15 +38,20 @@ export default function Products(props) {
                             <p>{props.type === 'dashboard' && dayjs(props.data.createdAt).fromNow() }</p>
                         </div>
                         <div className="buttons">
-                            <a href={props.data.link} className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
                             {props.type === 'dashboard' ?(
                                 <React.Fragment>
+                                    <a className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
                                     <a onClick={() => props.Edit(props.data)} className="contact" link=""><p>Edit</p></a>
                                     <a onClick={() => setDelOpen(true)} className="contact" link=""><p>Delete</p></a>
                                 </React.Fragment>
                                 
                             ): (
-                                <a href={props.data.link} className="contact" link=""><p>I want this!</p></a>
+                                <React.Fragment>
+                                <a onClick={() => window.open(props.data.link, "_blank")} className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
+                                <a onClick={() => window.open(props.data.link, "_blank")} className="contact" link="">
+                                    <p>I want this!</p>
+                                </a>
+                                </React.Fragment>
                             )}
                         </div>
                     </div>
@@ -61,11 +66,11 @@ export default function Products(props) {
                         </ul>
                     </div>
                 </div>
-            </PostStyle>
+            </CardStyle>
        )
 }
 
-const PostStyle = styled.div`
+const CardStyle = styled.div`
     display: block;
     position: relative;
     background-color: #fff;
@@ -86,6 +91,8 @@ const PostStyle = styled.div`
         img {
         
             max-width: 298px;
+            max-height: 400px;
+
         }
     }
 
@@ -106,6 +113,7 @@ const PostStyle = styled.div`
             text-decoration: none;
             font-family: roboto;
             font-weight: 100;
+            cursor: pointer;
 
             p {
                 margin: 0;
@@ -230,6 +238,7 @@ const PostStyle = styled.div`
             li {
 				margin: 0 1em;
                 z-index: 909;
+                cursor: pointer;
 			}
 
             .red {

@@ -68,6 +68,10 @@ const styles = (theme) => ({
 	}
 });
 
+const urlhandler = (url) => {
+	return process.env.NODE_ENV === "development" ?
+					url : process.env.REACT_APP_PRODUCTION_URL + url
+}
 class account extends Component {
 	constructor(props) {
 		super(props);
@@ -92,8 +96,9 @@ class account extends Component {
 		authMiddleWare(this.props.history);
 		const authToken = localStorage.getItem('AuthToken');
 		axios.defaults.headers.common = { Authorization: `${authToken}` };
+
 		axios
-			.get('/user')
+			.get(urlhandler('/user'))
 			.then((response) => {
 				this.setState({
 					firstName: response.data.userCredentials.firstName,
@@ -169,7 +174,7 @@ class account extends Component {
 		form_data.append('content', this.state.content);
 		axios.defaults.headers.common = { Authorization: `${authToken}` };
 		axios
-			.post('/user/image', form_data, {
+			.post(urlhandler('/user/image'), form_data, {
 				headers: {
 					'content-type': 'multipart/form-data'
 				}
@@ -423,7 +428,7 @@ class account extends Component {
 			email: this.state.email
 		};
 		axios
-			.post('/user', formRequest)
+			.post(urlhandler('/user'), formRequest)
 			.then(() => {
 				this.setState({ buttonLoading: false });
 			})
@@ -479,7 +484,8 @@ class account extends Component {
 											Activate
 										</Button>
 									</div>
-									<Button
+									{/* //! Profile picture */}
+									{/* <Button
 										variant="outlined"
 										color="primary"
 										type="submit"
@@ -499,7 +505,7 @@ class account extends Component {
 										</div>
 									) : (
 										false
-									)}
+									)} */}
 								</div>
 							</div>
 							<div className={classes.progress} />

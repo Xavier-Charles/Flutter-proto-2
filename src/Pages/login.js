@@ -12,7 +12,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -57,7 +57,7 @@ class Login extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.UI.errors) {
+		if (nextProps.UI) {
 			this.setState({
 				errors: nextProps.UI.errors
 			});
@@ -77,8 +77,12 @@ class Login extends Component {
 			email: this.state.email,
 			password: this.state.password
 		};
+		const urlhandler = (url) => {
+			return process.env.NODE_ENV === "development" ?
+						 url : process.env.REACT_APP_PRODUCTION_URL + url
+		} 
 		axios
-			.post('/login', userData)
+			.post(urlhandler('/login'), userData)
 			.then((response) => {
 				localStorage.setItem('AuthToken', `Bearer ${response.data.token}`);
 				this.setState({ 
@@ -98,6 +102,7 @@ class Login extends Component {
 	render() {
 		const { classes } = this.props;
 		const { errors, loading } = this.state;
+
 		return (
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />

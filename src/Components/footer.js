@@ -14,7 +14,7 @@ function Footer(props) {
     return (
         <Styled>
             <div className="textbox">
-                <Link className="Nav-brand-logoless" to="/">
+                <Link className="Nav-brand-logoless" to={home}>
                     {storename.charAt().toUpperCase()+storename.slice(1).toLowerCase()}
                 </Link>
                 <input type="email" class="long" placeholder="Email Address"></input>
@@ -35,7 +35,7 @@ function Footer(props) {
             <div className="textbox">
                 <p className="title">EMAIL</p>
                 <p className="text">Drop us a line anytime and we’ll get back to you within 24 hours.</p>
-                <p className="textBold">hello@fyrozine.ng</p>
+                <p className="textBold">tjedi257@gmail.com</p>
             </div>
             {/* <div className="end">
                 <p>©2020 Powered by fyr</p>

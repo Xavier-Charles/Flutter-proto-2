@@ -2,11 +2,30 @@ const { admin, db } = require('../util/admin');
 const config = require('../util/config');
 const { v4 } = require('uuid')
 
-exports.getAllProducts = (request, response) => {
+exports.getAllProducts = async (request, response) => {
     // return response.status(500).json(request)
+    // console.log(request.body, request.params)
+    let owner = await
+    db
+        .collection(`/users`)
+        .where("storename", "==", request.body.store)
+        .limit(1)
+        .get()
+        .then((doc) => {
+            let data;
+            doc.forEach(doc => {
+                data = doc.data()
+            })
+            return data
+        })
+        .catch((err) => {
+			console.error(err);
+			return response.status(500).json({ error: error.code });
+        });
+            
     db
         .collection('products')
-        .where('username', '==', request.user.username)
+        .where('username', '==', owner.username)
 		.orderBy('createdAt', 'desc')
 		.get()
 		.then((data) => {
@@ -19,7 +38,8 @@ exports.getAllProducts = (request, response) => {
                     price: doc.data().price,
                     description: doc.data().description,
                     createdAt: doc.data().createdAt,
-                    category: doc.data().category
+                    category: doc.data().category,
+                    link: doc.data().link
 				});
 			});
 			return response.json(products);
@@ -93,17 +113,17 @@ exports.postOneProduct = (request, response) => {
 					}
 				}
             })
-			.then(() => {
+			.then(async() => {
 				const img = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${imageFileName}?alt=media`;
                 let num
 
-                db
+                await db
                     .collection('users')
                     .doc(`${request.user.username}`)
                     .get()
                     .then((doc) => {
                         user = doc.data()
-                        console.log(user)
+                        // console.log(user)
 
                         if (user.phoneNumber/10000000000 < 1) {
                             num = 234*10000000000 + (user.phoneNumber%10000000000)

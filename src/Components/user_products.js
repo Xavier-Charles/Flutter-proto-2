@@ -33,6 +33,15 @@ const styles = (theme) => ({
 		// padding: theme.spacing(3)
 		paddingLeft: '2%'
 	},
+	none: {
+		fontSize: '2em',
+		width: '99vw',
+		margin: '0 auto',
+		marginTop: '1.2em',
+		fontFamily: 'Roboto',
+    	fontWeight: 300
+
+	},
 	appBar: {
 		position: 'relative'
 	},
@@ -111,6 +120,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const urlhandler = (url) => {
+	return process.env.NODE_ENV === "development" ?
+					url : process.env.REACT_APP_PRODUCTION_URL + url
+}
+
 class Products extends Component {
 	constructor(props) {
 		super(props);
@@ -146,11 +160,12 @@ class Products extends Component {
     };
 
 	componentWillMount = () => {
-		authMiddleWare(this.props.history);
-		const authToken = localStorage.getItem('AuthToken');
-		axios.defaults.headers.common = { Authorization: `${authToken}` };
+		// console.log(this.props)
+		// authMiddleWare(this.props.history);
+		// const authToken = localStorage.getItem('AuthToken');
+		// axios.defaults.headers.common = { Authorization: `${authToken}` };
 		axios
-			.get('/products')
+			.post(urlhandler('/products'), {store: this.props.store})
 			.then((response) => {
 				this.setState({
 					products: response.data,
@@ -163,18 +178,19 @@ class Products extends Component {
 	};
 
 	deleteProductHandler(data) {
-		// console.log(data)
+		this.setState({uiLoading: true});
 		authMiddleWare(this.props.history);
 		const authToken = localStorage.getItem('AuthToken');
 		axios.defaults.headers.common = { Authorization: `${authToken}` };
 		axios
-			.delete(`del_product/${data.productId}`)
+			.delete(urlhandler(`/del_product/${data.productId}`))
 			.then(() => {
 				window.location.reload();
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+		this.setState({uiLoading: false});
 	}
 
 	handleEditClickOpen(data) {
@@ -201,7 +217,7 @@ class Products extends Component {
 		const authToken = localStorage.getItem('AuthToken');
 		axios.defaults.headers.common = { Authorization: `${authToken}` };
 		axios
-			.get('/user')
+			.get(urlhandler('/user'))
 			.then((response) => {
 				// console.log(response.data);
 				this.setState({
@@ -289,26 +305,18 @@ class Products extends Component {
 			formData.append('price', state.price)
 			formData.append('category', state.category)
 
-			let options = {};
-			if (state.buttonType === 'Edit') {
-				options = {
-					url: `/product/${state.productId}`,
-					method: 'put',
-					data: formData,
-					headers: {
-						'content-type': 'multipart/form-data',
-					}
-				};
-			} else {
-				options = {
-					url: '/product',
+			let options = {
+					url: urlhandler('/product'),
 					method: 'post',
 					data: formData,
 					headers: {
 						'content-type': 'multipart/form-data',
 					}
 				};
-			}
+			if (state.buttonType === 'Edit') {
+				options.url = urlhandler(`/product/${state.productId}`)
+				options.method = 'put'
+			} 
 			const authToken = localStorage.getItem('AuthToken');
 			axios.defaults.headers.common = { Authorization: `${authToken}` };
 			axios(options)
@@ -480,6 +488,7 @@ class Products extends Component {
 					</Dialog>
 
 					<Grid container spacing={2}>
+						{this.state.products.length === 0 && <p className={classes.none}>No products added yet</p>}
 						{this.state.products.map((product, id) => (
 
 							<ProductCard 

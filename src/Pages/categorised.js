@@ -9,7 +9,7 @@ function Categorised(props) {
         <React.Fragment>
             <Nav/>           
             {/* <CatProducts /> */}
-            <Products categorised={true} category={props.match.params.handle}/>
+            <Products categorised={true} category={props.match.params.handle} store={props.match.params.storename}/>
             <section id="contact">
             <Footer/>
             </section>

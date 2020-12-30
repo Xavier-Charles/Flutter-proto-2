@@ -305,10 +305,12 @@ class signUp extends Component {
 			password,
 			confirmPassword
 		};
-		// console.log(newUserData);
-		// return
+		const urlhandler = (url) => {
+			return process.env.NODE_ENV === "development" ?
+						 url : process.env.REACT_APP_PRODUCTION_URL + url
+		}
 		axios
-			.post('/signup', newUserData)
+			.post(urlhandler('/signup'), newUserData)
 			.then((response) => {
 				localStorage.setItem('AuthToken', `${response.data.token}`);
 				this.setState({ 

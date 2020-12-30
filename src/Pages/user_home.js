@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import QuoteBox from '../Components/quoteBox'
 import PicBox from '../Components/picBox'
 import HeaderCarousel from '../Components/headerCarousel'
@@ -11,7 +11,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 
 
 import axios from 'axios';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 const styles = (theme) => ({
 	root: {
@@ -38,8 +38,12 @@ function Home(props) {
 
      useEffect(() => {
       setData({...data, uiLoading: true})
+      const urlhandler = (url) => {
+        return process.env.NODE_ENV === "development" ?
+              url : process.env.REACT_APP_PRODUCTION_URL + url
+      }
         axios
-          .get(`/store/${storename}`)
+          .get(urlhandler(`/store/${storename}`))
           .then((response) => {
             // console.log(response)
             if (response.data.activated === false && props.type === 'store') {

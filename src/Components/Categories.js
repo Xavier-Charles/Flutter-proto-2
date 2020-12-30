@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components'
 
-import AwesomeSlider from 'react-awesome-slider';
+// import AwesomeSlider from 'react-awesome-slider';
 import 'react-awesome-slider/dist/styles.css';
-import withAutoplay from 'react-awesome-slider/dist/autoplay';
+// import withAutoplay from 'react-awesome-slider/dist/autoplay';
 import { Link, withRouter } from 'react-router-dom';
 
 

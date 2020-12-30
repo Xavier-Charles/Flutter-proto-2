@@ -9,8 +9,8 @@ import Categorised from './Pages/categorised'
 import ProductsPage from './Pages/productsPage'
 import Dashboard from './Pages/user_dashboard'
 
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import { useEffect } from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+// import { useEffect } from 'react'
 
 function App() {
   return (
