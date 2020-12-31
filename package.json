@@ -49,5 +49,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5001/jedi-proto-1/us-central1/api"
+  "proxy": "http://localhost:5001/flutter-proto-1/us-central1/api"
 }

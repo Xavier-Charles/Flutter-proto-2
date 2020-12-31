@@ -4,12 +4,12 @@ const cors = require('cors');
 const app = require('express')();
 
 let allowedOrigins = ['http://localhost:3000',
-                      'http://127.0.0.1:5001/jedi-proto-1/us-central1/api',
-                      'http://localhost:5001/jedi-proto-1/us-central1/api',
+                      'http://127.0.0.1:5001/flutter-proto-1/us-central1/api',
+                      'http://localhost:5001/flutter-proto-1/us-central1/api',
                       'http://localhost:5000',
                       'https://fyrozine.com',
-                      'https://jedi-proto-1.web.app',
-                      'https://jedi-proto-1.firebaseapp.com'
+                      'https://flutter-proto-1.web.app',
+                      'https://flutter-proto-1.firebaseapp.com'
                     ];
 // Automatically allow cross-origin requests
 // app.use(cors({ origin: true }));

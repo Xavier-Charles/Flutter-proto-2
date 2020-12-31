@@ -91,7 +91,19 @@ class Login extends Component {
 				this.props.history.push('/account');
 			})
 			.catch((error) => {	
-				console.log(error)			
+				console.log(error)
+				if (error.message === 'Network Error') {
+					this.setState({
+						errors: {network: 'Having trouble conecting...'},
+						loading: false
+					});
+				}
+				if (error.response) {
+					error.response.status === 404 || 500 || 403 && this.setState({
+						errors: {network: 'Our bad. Please try again later'},
+						loading: false
+					});
+				}		
 				// this.setState({
 				// 	errors: error.response.data? error.response.data: error,
 				// 	loading: false
@@ -124,8 +136,8 @@ class Login extends Component {
 							name="email"
 							autoComplete="email"
 							autoFocus
-							helperText={errors.email}
-							error={errors.email ? true : false}
+							helperText={errors.email || errors.network}
+							error={errors.email || errors.network ? true : false}
 							onChange={this.handleChange}
 						/>
 						<TextField
