@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
 
-import withStyles from '@material-ui/core/styles/withStyles';
-import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Typography from '@material-ui/core/Typography';
 import { Card, CardActions, CardContent, Divider, Button, Grid, TextField } from '@material-ui/core';
 
+import { v4 } from 'uuid'
 import clsx from 'clsx';
-
 import axios from 'axios';
 import { authMiddleWare } from '../util/auth';
+import SelectCurrency from './select';
+import { verify_trans } from '../util/Pay';
 
 const styles = (theme) => ({
+	overrides: {
+        MuiSelect:{
+            root:{
+                textAlign:'left'
+            }
+        }
+   },
 	content: {
 		flexGrow: 1,
 		padding: theme.spacing(3)
@@ -67,7 +76,6 @@ const styles = (theme) => ({
 		marginTop: '10px'
 	}
 });
-
 const urlhandler = (url) => {
 	return process.env.NODE_ENV === "development" ?
 					url : process.env.REACT_APP_PRODUCTION_URL + url
@@ -99,7 +107,7 @@ class account extends Component {
 
 		axios
 			.get(urlhandler('/user'))
-			.then((response) => {
+			.then(async(response) => {
 				this.setState({
 					firstName: response.data.userCredentials.firstName,
 					lastName: response.data.userCredentials.lastName,
@@ -110,10 +118,17 @@ class account extends Component {
 					activated: response.data.userCredentials.activated,
 					uiLoading: false
 				});
-				// console.log(response);
+				let params = new URLSearchParams(window.location.search);
+				
+				if (params.get('status') === 'successful' && !response.data.userCredentials.activated) {
+					this.setState({uiLoading: true})
+					await verify_trans(params.get('transaction_id'), response.data.userCredentials, 20, 'USD')
+				}
 			})
 			.catch((error) => {
-				if (error.response.status === 403) {
+				if (error.response === undefined){
+					return console.log(error);
+				}else if (error.response.status === 403) {
 					this.props.history.push('/login');
 				}
 				console.log(error);
@@ -138,28 +153,50 @@ class account extends Component {
 		this.setState({
 			uiLoading: true
 		});
-		window.location.assign('https://paystack.com/pay/activate-store')
+		// window.location.assign('https://paystack.com/pay/activate-store')
 
 		// authMiddleWare(this.props.history);
 		// const authToken = localStorage.getItem('AuthToken');
-		// axios.defaults.headers.common = { Authorization: `${authToken}` };
-		// axios
-		// 	.post('/user/activate')
-		// 	.then((res) => {
-		// 		console.log(res)
-		// 	})
-		// 	.then(() => {
-		// 		window.location.reload();
-		// 	})
-		// 	.catch((error) => {
-		// 		if (error.response.status === 403) {
-		// 			this.props.history.push('/login');
-		// 		}
-		// 		console.log(error);
-		// 		this.setState({
-		// 			buttonLoading: false
-		// 		});
-		// 	});
+		const PayData = {
+			"tx_ref": v4(),
+			"amount": "20",
+			"currency":"USD",
+			"redirect_url": window.location.href,
+			"payment_options":"account, card, banktransfer, mpesa, qr, ussd, credit, barter, mobilemoneyghana, payattitude, mobilemoneyfranco, paga, 1voucher",
+			"meta":{
+				"consumer_id":23,
+				"consumer_mac":"92a3-912ba-1192a"
+			},
+			"customer":{
+				"email":this.state.email,
+				"phonenumber":this.state.phoneNumber,
+				"store":this.state.storename
+			},
+			"customizations":{
+				"title":"Jumga",
+				"description":"Activate your store",
+			}
+		}
+
+		axios.defaults.headers.common = { Authorization: `Bearer ${process.env.NODE_ENV === 'development'? process.env.REACT_APP_FLUTTER_S_KEY_TEST : process.env.REACT_APP_FLUTTER_S_KEY}` };
+		axios
+			.post(`${process.env.NODE_ENV === 'development' &&
+				'https://cors-anywhere.herokuapp.com/'}https://api.flutterwave.com/v3/payments`, PayData)
+			.then((res) => {
+				console.log(res)
+				if (res.status === 200) {
+					window.location.assign(res.data.data.link)
+				}
+			})
+			.catch((error) => {
+				if (error.response.status === 403) {
+					this.props.history.push('/login');
+				}
+				console.log(error);
+				this.setState({
+					uiLoading: false
+				});
+			});
 	}
 
 	profilePictureHandler = (event) => {
@@ -204,217 +241,7 @@ class account extends Component {
 		if (num/10000000000 < 1) {
 			num = `${234*10000000000 + (num%10000000000)}`
 		}
-		let country_list = ['AFGHANISTAN','ALBANIA',
-  'ALGERIA',
-  'ANDORRA',
-  'ANGOLA',
-  'ANGUILLA',
-  'ANTIGUA &AMP; BARBUDA',
-  'ARGENTINA',
-  'ARMENIA',
-  'ARUBA',
-  'AUSTRALIA',
-  'AUSTRIA',
-  'AZERBAIJAN',
-  'BAHAMAS',
-  'BAHRAIN',
-  'BANGLADESH',
-  'BARBADOS',
-  'BELARUS',
-  'BELGIUM',
-  'BELIZE',
-  'BENIN',
-  'BERMUDA',
-  'BHUTAN',
-  'BOLIVIA',
-  'BOSNIA &AMP; HERZEGOVINA',
-  'BOTSWANA',
-  'BRAZIL',
-  'BRITISH VIRGIN ISLANDS',
-  'BRUNEI',
-  'BULGARIA',
-  'BURKINA FASO',
-  'BURUNDI',
-  'CAMBODIA',
-  'CAMEROON',
-  'CAPE VERDE',
-  'CAYMAN ISLANDS',
-  'CHAD',
-  'CHILE',
-  'CHINA',
-  'COLOMBIA',
-  'CONGO',
-  'COOK ISLANDS',
-  'COSTA RICA',
-  'COTE D IVOIRE',
-  'CROATIA',
-  'CRUISE SHIP',
-  'CUBA',
-  'CYPRUS',
-  'CZECH REPUBLIC',
-  'DENMARK',
-  'DJIBOUTI',
-  'DOMINICA',
-  'DOMINICAN REPUBLIC',
-  'ECUADOR',
-  'EGYPT',
-  'EL SALVADOR',
-  'EQUATORIAL GUINEA',
-  'ESTONIA',
-  'ETHIOPIA',
-  'FALKLAND ISLANDS',
-  'FAROE ISLANDS',
-  'FIJI',
-  'FINLAND',
-  'FRANCE',
-  'FRENCH POLYNESIA',
-  'FRENCH WEST INDIES',
-  'GABON',
-  'GAMBIA',
-  'GEORGIA',
-  'GERMANY',
-  'GHANA',
-  'GIBRALTAR',
-  'GREECE',
-  'GREENLAND',
-  'GRENADA',
-  'GUAM',
-  'GUATEMALA',
-  'GUERNSEY',
-  'GUINEA',
-  'GUINEA BISSAU',
-  'GUYANA',
-  'HAITI',
-  'HONDURAS',
-  'HONG KONG',
-  'HUNGARY',
-  'ICELAND',
-  'INDIA',
-  'INDONESIA',
-  'IRAN',
-  'IRAQ',
-  'IRELAND',
-  'ISLE OF MAN',
-  'ISRAEL',
-  'ITALY',
-  'JAMAICA',
-  'JAPAN',
-  'JERSEY',
-  'JORDAN',
-  'KAZAKHSTAN',
-  'KENYA',
-  'KUWAIT',
-  'KYRGYZ REPUBLIC',
-  'LAOS',
-  'LATVIA',
-  'LEBANON',
-  'LESOTHO',
-  'LIBERIA',
-  'LIBYA',
-  'LIECHTENSTEIN',
-  'LITHUANIA',
-  'LUXEMBOURG',
-  'MACAU',
-  'MACEDONIA',
-  'MADAGASCAR',
-  'MALAWI',
-  'MALAYSIA',
-  'MALDIVES',
-  'MALI',
-  'MALTA',
-  'MAURITANIA',
-  'MAURITIUS',
-  'MEXICO',
-  'MOLDOVA',
-  'MONACO',
-  'MONGOLIA',
-  'MONTENEGRO',
-  'MONTSERRAT',
-  'MOROCCO',
-  'MOZAMBIQUE',
-  'NAMIBIA',
-  'NEPAL',
-  'NETHERLANDS',
-  'NETHERLANDS ANTILLES',
-  'NEW CALEDONIA',
-  'NEW ZEALAND',
-  'NICARAGUA',
-  'NIGER',
-  'NIGERIA',
-  'NORWAY',
-  'OMAN',
-  'PAKISTAN',
-  'PALESTINE',
-  'PANAMA',
-  'PAPUA NEW GUINEA',
-  'PARAGUAY',
-  'PERU',
-  'PHILIPPINES',
-  'POLAND',
-  'PORTUGAL',
-  'PUERTO RICO',
-  'QATAR',
-  'REUNION',
-  'ROMANIA',
-  'RUSSIA',
-  'RWANDA',
-  'SAINT PIERRE &AMP; MIQUELON',
-  'SAMOA',
-  'SAN MARINO',
-  'SATELLITE',
-  'SAUDI ARABIA',
-  'SENEGAL',
-  'SERBIA',
-  'SEYCHELLES',
-  'SIERRA LEONE',
-  'SINGAPORE',
-  'SLOVAKIA',
-  'SLOVENIA',
-  'SOUTH AFRICA',
-  'SOUTH KOREA',
-  'SPAIN',
-  'SRI LANKA',
-  'ST KITTS &AMP; NEVIS',
-  'ST LUCIA',
-  'ST VINCENT',
-  'ST. LUCIA',
-  'SUDAN',
-  'SURINAME',
-  'SWAZILAND',
-  'SWEDEN',
-  'SWITZERLAND',
-  'SYRIA',
-  'TAIWAN',
-  'TAJIKISTAN',
-  'TANZANIA',
-  'THAILAND',
-  "TIMOR L'ESTE",
-  'TOGO',
-  'TONGA',
-  'TRINIDAD &AMP; TOBAGO',
-  'TUNISIA',
-  'TURKEY',
-  'TURKMENISTAN',
-  'TURKS &AMP; CAICOS',
-  'UGANDA',
-  'UKRAINE',
-  'UNITED ARAB EMIRATES',
-  'UNITED KINGDOM',
-  'URUGUAY',
-  'UZBEKISTAN',
- 'VENEZUELA',
-  'VIETNAM',
-  'VIRGIN ISLANDS (US)',
-  'YEMEN',
-  'ZAMBIA',
-  'ZIMBABWE']
-		if (!country_list.includes(this.state.country.toUpperCase())){
-			this.setState({
-				errors: {country: "Did you misspell this?"}, 
-				loading: false
-			})
-			return
-		}
+
 		this.setState({ buttonLoading: true });
 		authMiddleWare(this.props.history);
 		const authToken = localStorage.getItem('AuthToken');
@@ -469,7 +296,7 @@ class account extends Component {
 									</div>
 									<div className={classes.header}>
 										<Typography color="Gold "className={classes.locationText} gutterBottom variant="h5">
-											Activated
+											{this.state.activated ? 'Activated' : 'Activate'}
 										</Typography>
 										<Button
 											variant="outlined"
@@ -523,7 +350,6 @@ class account extends Component {
 										<TextField
 											fullWidth
 											label="First name"
-											margin="dense"
 											name="firstName"
 											variant="outlined"
 											value={this.state.firstName}
@@ -536,7 +362,6 @@ class account extends Component {
 										<TextField
 											fullWidth
 											label="Last name"
-											margin="dense"
 											name="lastName"
 											variant="outlined"
 											value={this.state.lastName}
@@ -549,7 +374,6 @@ class account extends Component {
 										<TextField
 											fullWidth
 											label="Email"
-											margin="dense"
 											name="email"
 											variant="outlined"
 											value={this.state.email}
@@ -562,7 +386,6 @@ class account extends Component {
 										<TextField
 											fullWidth
 											label="Store Phone Number"
-											margin="dense"
 											name="phoneNumber"
 											variant="outlined"
 											value={this.state.phoneNumber}
@@ -575,7 +398,6 @@ class account extends Component {
 										<TextField
 											fullWidth
 											label="Store Name"
-											margin="dense"
 											name="storename"
 											disabled={false}
 											variant="outlined"
@@ -586,17 +408,15 @@ class account extends Component {
 										/>
 									</Grid>
 									<Grid item md={6} xs={12}>
-										<TextField
-											fullWidth
+										<SelectCurrency 
 											label="Country"
-											margin="dense"
+											id="select"
 											name="country"
-											variant="outlined"
 											value={this.state.country}
 											onChange={this.handleChange}
 											helperText={errors.country}
 											error={errors.country ? true : false}
-										/>
+										></SelectCurrency>
 									</Grid>
 								</Grid>
 							</CardContent>

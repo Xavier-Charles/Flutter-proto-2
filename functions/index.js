@@ -3,9 +3,10 @@ const functions = require('firebase-functions');
 const cors = require('cors');
 const app = require('express')();
 
+
 let allowedOrigins = ['http://localhost:3000',
-                      'http://127.0.0.1:5001/flutter-proto-1/us-central1/api',
-                      'http://localhost:5001/flutter-proto-1/us-central1/api',
+                      'http://127.0.0.1:5001/flutter-proto-2/us-central1/api',
+                      'http://localhost:5001/flutter-proto-2/us-central1/api',
                       'http://localhost:5000',
                       'https://fyrozine.com',
                       'https://flutter-proto-1.web.app',
@@ -62,7 +63,7 @@ app.get('/store/:storename', getStore);
 app.post('/user/image', auth, uploadProfilePhoto);
 app.get('/user', auth, getUserDetail);
 app.post('/user', auth, updateUserDetails);
-app.post('/user/activate', auth, activateUser)
+app.post('/activate/:username', activateUser)
 
 // exports.api = functions.region('europe-west3').https.onRequest(app);
 exports.apiz = functions.https.onRequest(app);

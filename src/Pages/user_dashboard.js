@@ -94,7 +94,8 @@ class Dashboard extends Component {
 			lastName: '',
 			profilePicture: '',
 			uiLoading: true,
-			imageLoading: false
+			imageLoading: false,
+			render: true
 		};
 	}
 

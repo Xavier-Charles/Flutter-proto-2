@@ -30,10 +30,10 @@ function Nav (props)  {
 	const [width, setWidth] = useState(window.innerWidth);
 	const [navOpen, setNavOpen] = useState(false);
 
-	let storename = props.match.params.storename
-	let home = props.location.pathname.includes('store') ? 
-		`/store/${storename}`:
-		`/preview/${storename}`
+	// let storename = props.match.params.storename
+	// let home = props.location.pathname.includes('store') ? 
+	// 	`/store/${storename}`:
+	// 	`/preview/${storename}`
 
     
 
@@ -53,10 +53,7 @@ function Nav (props)  {
         <NavStyle>
 			<div className={scrollPosY === 0 ? "noScroll" : "onScroll"}>
 				<div className="Nav-brand">
-					<Link className="Nav-brand-logoless" to={home}>
-						{storename.charAt().toUpperCase()+storename.slice(1).toLowerCase()}
-					</Link>
-
+					<Link className="Nav-brand-logoless" to="/">Jumga</Link>
 					<div id="menuToggle" className={width > 620 ? 'menuLarge': navOpen ? 'navOpen' : ''}>
 						{width < 620 && (
 							<div>
@@ -68,17 +65,17 @@ function Nav (props)  {
 						)}
 						<ul id="menu">
 							<li>
-								<HLink smooth to={home + "#contact"}>Contact</HLink>
+								<Link to={"/products"}>New products</Link>
 							</li>
 							<li>
-								<HLink smooth to={home + "#wrapper"}>Categories</HLink>
+								<HLink smooth to={"/#wrapper"}>Categories</HLink>
 								{/* {console.log(props)} */}
 							</li>
 							{/* <li>
 								<Link to="/about">About</Link>
 							</li> */}
 							<li>
-								<Link to={home + "/products"}>New products</Link>
+								<HLink smooth to={"/login"}>Sellers</HLink>
 							</li>
 							{/* <li>
 								<Link to="/your/closet">Your Closet</Link>
@@ -141,7 +138,7 @@ const NavStyle = styled.nav`
         font-family: Roboto;
         font-size: 1.70em;
         font-weight: 300;
-        margin: 8px;
+        margin: 12px;
 		margin-left: 1.3em;
 	}
 

@@ -91,7 +91,7 @@ class Login extends Component {
 				this.props.history.push('/account');
 			})
 			.catch((error) => {	
-				console.log(error)
+				console.log({error})
 				if (error.message === 'Network Error') {
 					this.setState({
 						errors: {network: 'Having trouble conecting...'},
@@ -99,15 +99,18 @@ class Login extends Component {
 					});
 				}
 				if (error.response) {
-					error.response.status === 404 || 500 || 403 && this.setState({
-						errors: {network: 'Our bad. Please try again later'},
-						loading: false
-					});
-				}		
-				// this.setState({
-				// 	errors: error.response.data? error.response.data: error,
-				// 	loading: false
-				// });
+					if (error.response.status === 404 || 500) this.setState({
+						errors: {network: 'Our bad. Please try again later1'},
+					})
+					error.response.status === 403 ? this.setState({
+						errors: {email: 'Invalid Email', password: 'Invalid Password'},
+					}) : this.setState({
+						errors: {network: 'Something went wrong'},
+					})
+				}
+				this.setState({
+					loading: false
+				});
 			});
 	};
 

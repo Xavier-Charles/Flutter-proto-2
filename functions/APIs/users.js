@@ -227,9 +227,8 @@ exports.updateUserDetails = (request, response) => {
 }
 
 exports.activateUser = (request, response) => {
-
-    console.log(request.user)
-    let document = db.collection('users').doc(`${request.user.username}`);
+    console.log(request.params.username)
+    let document = db.collection('users').doc(`${request.params.username}`);
 
     // return 
     document.update({activated: true})

@@ -6,17 +6,15 @@ import logo from '../assets/frozlintell.png'
 
 function Footer(props) {
 
-    let storename = props.match.params.storename
-	let home = props.location.pathname.includes('store') ? 
-		`/store/${storename}`:
-		`/preview/${storename}`
+    // let storename = props.match.params.storename
+	// let home = props.location.pathname.includes('store') ? 
+	// 	`/store/${storename}`:
+	// 	`/preview/${storename}`
 
     return (
         <Styled>
             <div className="textbox">
-                <Link className="Nav-brand-logoless" to={home}>
-                    {storename.charAt().toUpperCase()+storename.slice(1).toLowerCase()}
-                </Link>
+                <Link className="Nav-brand-logoless" to={"/"}>Jumga</Link>
                 <input type="email" class="long" placeholder="Email Address"></input>
                 <button type="submit" class="fill">{'>'}</button>
                 <p className="text">Recieve 20% off your first purchase</p>

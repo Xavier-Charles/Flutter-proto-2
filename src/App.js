@@ -4,7 +4,8 @@ import './App.css';
 import Notfound from './Components/404'
 import Login from './Pages/login';
 import signUp from './Pages/signUp';
-import Home from './Pages/user_home';
+// import Home from './Pages/user_home';
+import Home from './Pages/home';
 import Categorised from './Pages/categorised'
 import ProductsPage from './Pages/productsPage'
 import Dashboard from './Pages/user_dashboard'
@@ -19,8 +20,8 @@ function App() {
         
         <Switch>
           <Route exact path="/">
-              <Dashboard/>
-              {/* <Home/> */}
+              {/* <Dashboard/> */}
+              <Home/>
           </Route>
 
           {/* <Route exact path="/products" component={ProductsPage}/>  */}
