@@ -30,7 +30,8 @@ function App() {
           <Route exact path="/store/:storename"><Home type="store"/></Route>
           <Route exact path="/preview/:storename"><Home type="preview"/></Route>
           // -----------------------------------------------------------------------
-          
+          <Route exact path="/newproducts" component={ProductsPage}/>
+
           <Route exact path="/store/:storename/products" component={ProductsPage}/>
           <Route exact path="/preview/:storename/products" component={ProductsPage}/>
           <Route exact path="/store/:storename/categorised/:handle" component={Categorised}/>

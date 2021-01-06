@@ -4,11 +4,12 @@ import Products from '../Components/products'
 import Footer from '../Components/footer'
 
 function ProductsPage(props) {
-    // console.log(props);
+    console.log(props);
+    let store = props.match.params.storename
     return(
         <React.Fragment>
             <Nav/>           
-            <Products store={props.match.params.storename}/>
+            <Products store={ store === undefined ? null : store}/>
             <section id="contact">
               <Footer/>
             </section>

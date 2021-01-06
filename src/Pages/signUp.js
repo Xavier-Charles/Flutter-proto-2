@@ -3,7 +3,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -35,6 +35,10 @@ const styles = (theme) => ({
 	},
 	progess: {
 		position: 'absolute'
+	},
+	link: {
+		color: 'blue',
+		textDecoration: '#3f51b5'
 	}
 });
 
@@ -268,7 +272,7 @@ class signUp extends Component {
 						</Button>
 						<Grid container justify="flex-end">
 							<Grid item>
-								<Link href="login" variant="body2">
+								<Link to="/login" className={classes.link}>
 									Already have an account? Sign in
 								</Link>
 							</Grid>

@@ -3,6 +3,34 @@ const config = require('../util/config');
 const { v4 } = require('uuid')
 
 exports.getAllProducts = async (request, response) => {
+            
+    db
+        .collection('products')
+		.orderBy('createdAt', 'desc')
+		.get()
+		.then((data) => {
+			let products = [];
+			data.forEach((doc) => {
+				products.push({
+                    productId: doc.id,
+                    name: doc.data().name,
+					img: doc.data().img,
+                    price: doc.data().price,
+                    description: doc.data().description,
+                    createdAt: doc.data().createdAt,
+                    category: doc.data().category,
+                    link: doc.data().link
+				});
+			});
+			return response.json(products);
+		})
+		.catch((err) => {
+			console.error(err);
+			return response.status(500).json({ error: err.code});
+		});
+}
+
+exports.getAllUserProducts = async (request, response) => {
     // return response.status(500).json(request)
     // console.log(request.body, request.params)
     let owner = await
@@ -22,7 +50,7 @@ exports.getAllProducts = async (request, response) => {
 			console.error(err);
 			return response.status(500).json({ error: error.code });
         });
-            
+
     db
         .collection('products')
         .where('username', '==', owner.username)

@@ -43,7 +43,7 @@ exports.signUpUser = (request, response) => {
         country: request.body.country,
 		password: request.body.password,
 		confirmPassword: request.body.confirmPassword,
-        actvated: false
+        activated: false
     };
 
     const { valid, errors } = validateSignUpData(newUser);
@@ -84,7 +84,7 @@ exports.signUpUser = (request, response) => {
                 email: newUser.email,
                 storename: newUser.storename,
                 categories: [],
-                actvated: false,
+                activated: false,
                 createdAt: new Date().toISOString(),
                 username: userId,
                 userId
@@ -227,19 +227,43 @@ exports.updateUserDetails = (request, response) => {
 }
 
 exports.activateUser = (request, response) => {
-    console.log(request.params.username)
-    let document = db.collection('users').doc(`${request.params.username}`);
-
-    // return 
+    
+    let document = db.doc(`/users/${request.params.username}`)
     document.update({activated: true})
-    .then(()=> {
-        response.json({message: 'Activated'});
-    })
-    .catch((error) => {
-        console.error(error);
-        return response.status(500).json({ 
-            message: "Cannot Activate"
-        });
+    
+    db
+        .doc(`/users/${request.params.username}`)
+        .get()
+        .then((document) => {
+                let doc = document.data()
+                const userCredentials = {
+                    firstName: doc.firstName,
+                    lastName: doc.lastName,
+                    phoneNumber: doc.phoneNumber,
+                    country: doc.country,
+                    email: doc.email,
+                    storename: doc.storename,
+                    categories: doc.categories,
+                    activated: true,
+                    activatedAt: new Date().toISOString(),
+                    createdAt: doc.createdAt,
+                    username: doc.username,
+                    userId: doc.username
+                };
+
+                return db
+                        .doc(`/activatedUsers/${doc.username}`)
+                        .set(userCredentials)
+                
+        })
+        .then(()=> {
+            response.json({message: 'Activated'});
+        })
+        .catch((error) => {
+            console.error(error);
+            return response.status(500).json({ 
+                message: "Cannot Activate"
+            });
     });
 }
 

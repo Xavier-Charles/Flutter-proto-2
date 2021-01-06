@@ -50,7 +50,8 @@ export default function Products(props) {
 		const urlhandler = (url) => {
 			return process.env.NODE_ENV === "development" ?
 						 url : process.env.REACT_APP_PRODUCTION_URL + url
-		}
+        }
+        props.store ?
         axios
 			.post(urlhandler('/products'), {store: props.store})
 			.then((response) => {
@@ -58,7 +59,16 @@ export default function Products(props) {
             })
 			.catch((err) => {
 				console.log(err);
-			});
+            })
+        :
+        axios
+			.get(urlhandler('/products'))
+			.then((response) => {
+				setProductData(response.data);
+            })
+			.catch((err) => {
+				console.log(err);
+            })
     }, [])
     
     // console.log(ProductData)

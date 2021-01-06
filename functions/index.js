@@ -9,8 +9,8 @@ let allowedOrigins = ['http://localhost:3000',
                       'http://localhost:5001/flutter-proto-2/us-central1/api',
                       'http://localhost:5000',
                       'https://fyrozine.com',
-                      'https://flutter-proto-1.web.app',
-                      'https://flutter-proto-1.firebaseapp.com'
+                      'https://flutter-proto-2.web.app',
+                      'https://flutter-proto-2.firebaseapp.com'
                     ];
 // Automatically allow cross-origin requests
 // app.use(cors({ origin: true }));
@@ -30,7 +30,7 @@ app.use(cors({
 }));
 
 const {
-    getAllProducts, getOneProduct, postOneProduct, deleteProduct, editProduct
+    getAllProducts, getAllUserProducts, getOneProduct, postOneProduct, deleteProduct, editProduct
 } = require('./APIs/BKNDproducts')
 const {
     loginUser, signUpUser, uploadProfilePhoto, getUserDetail, updateUserDetails, activateUser, getStore
@@ -49,7 +49,8 @@ firebase.initializeApp(config);
 // });
 
 //todo find a way to replace "auth" in get methods
-app.post('/products', getAllProducts);
+app.get('/products', getAllProducts); // all products from all stores
+app.post('/products', getAllUserProducts); // all products from just one store
 app.get('/products/:productId', auth, getOneProduct);
 app.post('/product', auth, postOneProduct);
 app.delete('/del_product/:productId', auth, deleteProduct);

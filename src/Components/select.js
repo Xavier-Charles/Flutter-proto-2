@@ -29,7 +29,6 @@ export default function SelectCurrency (props) {
                     name={props.name}
                     value={props.value}
                     onChange={props.onChange}
-                    helperText={props.helperText}
                     error={props.error}
                 >
                     <MenuItem value={'Nigeria'}>Nigerian Naira (&#8358;) </MenuItem>

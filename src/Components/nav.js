@@ -65,7 +65,7 @@ function Nav (props)  {
 						)}
 						<ul id="menu">
 							<li>
-								<Link to={"/products"}>New products</Link>
+								<Link to={"/newproducts"}>New products</Link>
 							</li>
 							<li>
 								<HLink smooth to={"/#wrapper"}>Categories</HLink>

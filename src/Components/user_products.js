@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-// import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import Dialog from '@material-ui/core/Dialog';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import AppBar from '@material-ui/core/AppBar';
@@ -13,10 +12,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
-// import Card from '@material-ui/core/Card';
-// import CardActions from '@material-ui/core/CardActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
-// import CardContent from '@material-ui/core/CardContent';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 
@@ -30,7 +26,6 @@ import ProductCard from './productCard'
 const styles = (theme) => ({
 	content: {
 		flexGrow: 1,
-		// padding: theme.spacing(3)
 		paddingLeft: '2%'
 	},
 	none: {
@@ -144,7 +139,8 @@ class Products extends Component {
 			open: false,
 			uiLoading: true,
 			buttonType: '',
-			viewOpen: false
+			viewOpen: false,
+			activated: this.props.activated
 		};
 
 		this.deleteProductHandler = this.deleteProductHandler.bind(this);
@@ -160,10 +156,6 @@ class Products extends Component {
     };
 
 	componentWillMount = () => {
-		// console.log(this.props)
-		// authMiddleWare(this.props.history);
-		// const authToken = localStorage.getItem('AuthToken');
-		// axios.defaults.headers.common = { Authorization: `${authToken}` };
 		axios
 			.post(urlhandler('/products'), {store: this.props.store})
 			.then((response) => {
@@ -194,7 +186,6 @@ class Products extends Component {
 	}
 
 	handleEditClickOpen(data) {
-		// console.log(data)
 		this.setState({
 			name: data.name,
             img: data.img,
@@ -219,7 +210,6 @@ class Products extends Component {
 		axios
 			.get(urlhandler('/user'))
 			.then((response) => {
-				// console.log(response.data);
 				this.setState({
 					categories: response.data.userCredentials.categories,
 				});
@@ -354,6 +344,7 @@ class Products extends Component {
 						className={classes.floatingButton}
 						color="primary"
 						aria-label="Add Product"
+						disabled={!this.state.activated}
 						onClick={handleClickOpen}
 					>
 						<AddCircleIcon style={{ fontSize: 60 }} />
@@ -444,17 +435,7 @@ class Products extends Component {
 									/>
 								</Grid>
                                 <Grid item xs={6}>
-                                    {/* <Button
-										variant="outlined"
-										color="primary"
-										type="submit"
-										size="small"
-										startIcon={<CloudUploadIcon />}
-										className={classes.uploadButton}
-										onClick={this.imageHandler}
-									>
-										Upload Image
-									</Button> */}
+
 									<input required type="file" onChange={this.handleImageChange} />
 
 									{this.state.errors.formImage && (

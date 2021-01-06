@@ -4,7 +4,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import MuiLink from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -41,6 +41,10 @@ const styles = (theme) => ({
 	},
 	progess: {
 		position: 'absolute'
+	},
+	link: {
+		color: '#3f51b5',
+		textDecoration: 'none'
 	}
 });
 
@@ -91,7 +95,7 @@ class Login extends Component {
 				this.props.history.push('/account');
 			})
 			.catch((error) => {	
-				console.log({error})
+				console.log(error)
 				if (error.message === 'Network Error') {
 					this.setState({
 						errors: {network: 'Having trouble conecting...'},
@@ -171,9 +175,9 @@ class Login extends Component {
 						</Button>
 						<Grid container>
 							<Grid item>
-								<MuiLink href="signup" variant="body2">
+								<Link to="/signup" className={classes.link}>
 									{"Don't have an account? Sign Up"}
-								</MuiLink>
+								</Link>
 							</Grid>
 						</Grid>
 						{errors.general && (

@@ -1,26 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-
 import Account from '../Components/account';
 import Nav from '../Components/dashboardnav';
 import Products from '../Components/user_products';
-
-// import Drawer from '@material-ui/core/Drawer';
-// import AppBar from '@material-ui/core/AppBar';
-// import CssBaseline from '@material-ui/core/CssBaseline';
-// import Toolbar from '@material-ui/core/Toolbar';
-// import List from '@material-ui/core/List';
-// import Typography from '@material-ui/core/Typography';
-// import Divider from '@material-ui/core/Divider';
-// import ListItem from '@material-ui/core/ListItem';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
-// import ListItemText from '@material-ui/core/ListItemText';
 import withStyles from '@material-ui/core/styles/withStyles';
-// import AccountBoxIcon from '@material-ui/icons/AccountBox';
-// import NotesIcon from '@material-ui/icons/Notes';
-// import Avatar from '@material-ui/core/avatar';
-// import VisibilityIcon from '@material-ui/icons/Visibility';
-// import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withRouter } from 'react-router-dom';
 
@@ -110,7 +93,6 @@ class Dashboard extends Component {
 		axios
 			.get(urlhandler('/user'))
 			.then((response) => {
-				// console.log(response);
 				this.setState({
 					firstName: response.data.userCredentials.firstName,
 					lastName: response.data.userCredentials.lastName,
@@ -121,7 +103,8 @@ class Dashboard extends Component {
 					categories: response.data.userCredentials.categories,
 					storename: response.data.userCredentials.storename,
 					uiLoading: false,
-					profilePicture: response.data.userCredentials.imageUrl
+					activated: response.data.userCredentials.activated
+					// profilePicture: response.data.userCredentials.imageUrl
 				});
 			})
 			.catch((error) => {
@@ -136,12 +119,7 @@ class Dashboard extends Component {
 
 	render() {
 		const { classes } = this.props;	
-		// return (
-		// 		<div className={classes.root}>
-		// 			{<CircularProgress size={50} className={classes.uiProgess} />}
-		// 		</div>
-		// 	);
-		
+
 		if (this.state.uiLoading === true) {
 			return (
 				<div className={classes.root}>
@@ -151,75 +129,15 @@ class Dashboard extends Component {
 		} else {
 			return (
 				<div className={classes.root}>
-					{/* <CssBaseline /> */}
-					{/* <AppBar position="fixed" className={classes.appBar}>
-						<Toolbar>
-							<Typography variant="h6" noWrap>
-								{this.state.storename.charAt().toUpperCase()+this.state.storename.slice(1).toLowerCase()}
-							</Typography>
-						</Toolbar>
-					</AppBar> */}
 					<Nav storename={this.state.storename} handlers={{
 						product: this.loadProductsPage,
 						account: this.loadAccountPage,
 						preview: this.previewHandler,
 						logout: this.logoutHandler
 					}}/>
-					{/* <Drawer
-						className={classes.drawer}
-						variant="permanent"
-						classes={{
-							paper: classes.drawerPaper
-						}}
-					>
-						<div className={classes.toolbar} />
-						<Divider />
-						<center>
-							<Avatar src={this.state.profilePicture} className={classes.avatar} />
-							<p>
-								{' '}
-								{this.state.firstName} {this.state.lastName}
-							</p>
-						</center>
-						<Divider />
-						<List>
-							<ListItem button key="Products" onClick={this.loadProductsPage}>
-								<ListItemIcon>
-									{' '}
-									<NotesIcon />{' '}
-								</ListItemIcon>
-								<ListItemText primary="Products" />
-							</ListItem>
-
-							<ListItem button key="Account" onClick={this.loadAccountPage}>
-								<ListItemIcon>
-									{' '}
-									<AccountBoxIcon />{' '}
-								</ListItemIcon>
-								<ListItemText primary="Account" />
-							</ListItem>
-
-							<ListItem button key="Logout" onClick={this.logoutHandler}>
-								<ListItemIcon>
-									{' '}
-									<ExitToAppIcon />{' '}
-								</ListItemIcon>
-								<ListItemText primary="Logout" />
-							</ListItem>
-
-							<ListItem button key="Preview" onClick={this.previewHandler}>
-								<ListItemIcon>
-									{' '}
-									<VisibilityIcon />{' '}
-								</ListItemIcon>
-								<ListItemText primary="Preview" />
-							</ListItem>
-						</List>
-					</Drawer> */}
-
 					<div>{this.state.render ? 
-									<Account /> : 
-									<Products categories={this.state.categories} store={this.state.storename} />}
+									<Account data={this.state}/> : 
+									<Products activated={this.state.activated} categories={this.state.categories} store={this.state.storename} />}
 					</div>
 				</div>
 			);

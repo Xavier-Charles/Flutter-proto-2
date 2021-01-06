@@ -161,7 +161,7 @@ class account extends Component {
 			"tx_ref": v4(),
 			"amount": "20",
 			"currency":"USD",
-			"redirect_url": window.location.href,
+			"redirect_url": `${window.location.href}`,
 			"payment_options":"account, card, banktransfer, mpesa, qr, ussd, credit, barter, mobilemoneyghana, payattitude, mobilemoneyfranco, paga, 1voucher",
 			"meta":{
 				"consumer_id":23,
@@ -258,6 +258,7 @@ class account extends Component {
 			.post(urlhandler('/user'), formRequest)
 			.then(() => {
 				this.setState({ buttonLoading: false });
+				window.location.reload()
 			})
 			.catch((error) => {
 				if (error.response.status === 403) {
@@ -295,7 +296,7 @@ class account extends Component {
 										</Typography>
 									</div>
 									<div className={classes.header}>
-										<Typography color="Gold "className={classes.locationText} gutterBottom variant="h5">
+										<Typography className={classes.locationText} gutterBottom variant="h5">
 											{this.state.activated ? 'Activated' : 'Activate'}
 										</Typography>
 										<Button
