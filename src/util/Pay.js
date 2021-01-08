@@ -38,7 +38,7 @@ export const verify_trans = async (tx_id, user, Amt, curr) => {
 
 	axios.defaults.headers.common = { Authorization: `Bearer ${process.env.NODE_ENV === 'development'? process.env.REACT_APP_FLUTTER_S_KEY_TEST : process.env.REACT_APP_FLUTTER_S_KEY}` };
     axios
-        .get(`${process.env.NODE_ENV === 'development' && 'https://cors-anywhere.herokuapp.com/'}https://api.flutterwave.com/v3/transactions/${tx_id}/verify`)
+        .get(`https://nameless-shelf-51198.herokuapp.com/https://api.flutterwave.com/v3/transactions/${tx_id}/verify`)
         .then(res => {
             if (res.data.status === "success" && res.data.data.amount === Amt && 
                 res.data.data.currency === curr && res.data.data.customer.email === user.email) {

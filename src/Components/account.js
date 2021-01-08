@@ -153,7 +153,6 @@ class account extends Component {
 		this.setState({
 			uiLoading: true
 		});
-		// window.location.assign('https://paystack.com/pay/activate-store')
 
 		// authMiddleWare(this.props.history);
 		// const authToken = localStorage.getItem('AuthToken');
@@ -180,8 +179,7 @@ class account extends Component {
 
 		axios.defaults.headers.common = { Authorization: `Bearer ${process.env.NODE_ENV === 'development'? process.env.REACT_APP_FLUTTER_S_KEY_TEST : process.env.REACT_APP_FLUTTER_S_KEY}` };
 		axios
-			.post(`${process.env.NODE_ENV === 'development' &&
-				'https://cors-anywhere.herokuapp.com/'}https://api.flutterwave.com/v3/payments`, PayData)
+			.post(`https://nameless-shelf-51198.herokuapp.com/https://api.flutterwave.com/v3/payments`, PayData)
 			.then((res) => {
 				console.log(res)
 				if (res.status === 200) {
@@ -189,10 +187,7 @@ class account extends Component {
 				}
 			})
 			.catch((error) => {
-				if (error.response.status === 403) {
-					this.props.history.push('/login');
-				}
-				console.log(error);
+				console.log({error});
 				this.setState({
 					uiLoading: false
 				});
