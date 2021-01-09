@@ -106,7 +106,8 @@ exports.postOneProduct = (request, response) => {
     const BusBoy = require('busboy');
 	const path = require('path');
 	const os = require('os');
-	const fs = require('fs');
+    const fs = require('fs');
+    const pId = v4();
 	const busboy = new BusBoy({ headers: request.headers });
 
     let imageFileName;
@@ -119,7 +120,7 @@ exports.postOneProduct = (request, response) => {
 			return response.status(400).json({ error: 'Wrong file type submited' });
 		}
 		const imageExtension = filename.split('.')[filename.split('.').length - 1];
-        imageFileName = `${v4()+'&'+request.user.username}.${imageExtension}`;
+        imageFileName = `${pId+'&'+request.user.username}.${imageExtension}`;
 		const filePath = path.join(os.tmpdir(), imageFileName);
 		imageToBeUploaded = { filePath, mimetype };
         file.pipe(fs.createWriteStream(filePath));
@@ -151,7 +152,8 @@ exports.postOneProduct = (request, response) => {
                     .get()
                     .then((doc) => {
                         user = doc.data()
-                        // console.log(user)
+                        let document = db.collection('users').doc(`${request.user.username}`);
+                        user.products.push(pId)
 
                         if (user.phoneNumber/10000000000 < 1) {
                             num = 234*10000000000 + (user.phoneNumber%10000000000)
@@ -159,14 +161,14 @@ exports.postOneProduct = (request, response) => {
 
                         if ( !user.categories.includes(fields.category) && fields.category !== "") {
                             user.categories.push(fields.category)
-                            let document = db.collection('users').doc(`${request.user.username}`);
-                            document.update(user)
                         }
+                        document.update(user)
                     
                     })
 
                 const link = `${"https://wa.me/" + num + "?text=I%20want%20Product%20" + fields.name}`
                 const newProductItem = {
+                    id: pId,
                     username: request.user.username,
                     name: fields.name,
                     img,

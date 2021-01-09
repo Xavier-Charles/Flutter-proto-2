@@ -285,6 +285,8 @@ class Products extends Component {
 				this.setState({errors: {...errors, price: "You have not set your product's price"}})
 				return
 			}
+
+			this.setState({uiLoading: true});
 			authMiddleWare(this.props.history);
 			event.preventDefault();
 
@@ -311,11 +313,11 @@ class Products extends Component {
 			axios.defaults.headers.common = { Authorization: `${authToken}` };
 			axios(options)
 				.then(() => {
-					this.setState({ open: false });
+					this.setState({ open: false, uiLoading: false });
 					window.location.reload();
 				})
 				.catch((error) => {
-					this.setState({ open: true, errors: error.response.data });
+					this.setState({ open: true, errors: error.response.data, uiLoading: false });
 					console.log(error);
 				});
 		};

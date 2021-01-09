@@ -65,8 +65,8 @@ class Dashboard extends Component {
 		this.props.history.push('/login');
 	};
 
-	previewHandler =(event) => {
-		window.open(`${window.location.origin}/preview/${this.state.storename}`, "_blank")
+	viewHandler =(event) => {
+		window.open(`${window.location.origin}/store/${this.state.storename}`, "_blank")
 	}
 
 	constructor(props) {
@@ -132,9 +132,9 @@ class Dashboard extends Component {
 					<Nav storename={this.state.storename} handlers={{
 						product: this.loadProductsPage,
 						account: this.loadAccountPage,
-						preview: this.previewHandler,
+						view: this.viewHandler,
 						logout: this.logoutHandler
-					}}/>
+					}} activated={this.state.activated} />
 					<div>{this.state.render ? 
 									<Account data={this.state}/> : 
 									<Products activated={this.state.activated} categories={this.state.categories} store={this.state.storename} />}

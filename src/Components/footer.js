@@ -15,8 +15,8 @@ function Footer(props) {
         <Styled>
             <div className="textbox">
                 <Link className="Nav-brand-logoless" to={"/"}>Jumga</Link>
-                <input type="email" class="long" placeholder="Email Address"></input>
-                <button type="submit" class="fill">{'>'}</button>
+                <input type="email" className="long" placeholder="Email Address"></input>
+                <button type="submit" className="fill">{'>'}</button>
                 <p className="text">Recieve 20% off your first purchase</p>
                 <p className="textBold"></p>
             </div>

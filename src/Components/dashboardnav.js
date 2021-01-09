@@ -70,7 +70,9 @@ function Nav (props)  {
 								<Link onClick={() => props.handlers.account()}>Account</Link>
 							</li>
                             <li>
-								<Link onClick={() => props.handlers.preview()}>Preview</Link>
+								<Link onClick={() => props.handlers.view()} className={props.activated? 
+									"" : 'disabled'}> Your Store
+								</Link>
 							</li>
                             <li>
 								<Link onClick={() => props.handlers.logout()}>Logout</Link>
@@ -121,6 +123,11 @@ const NavStyle = styled.nav`
         margin: 8px;
 		margin-left: 1.3em;
 		-webkit-tap-highlight-color: transparent;
+	}
+	.disabled {
+		pointer-events: none;
+		cursor: default;
+		color: #bb9c9c;
 	}
 
 	.menuLarge {

@@ -1,10 +1,10 @@
 import React from 'react';
+
 import Nav from '../Components/nav'
-import Products from '../Components/products'
 import Footer from '../Components/footer'
+import Products from '../Components/products'
 
 function ProductsPage(props) {
-    console.log(props);
     let store = props.match.params.storename
     return(
         <React.Fragment>

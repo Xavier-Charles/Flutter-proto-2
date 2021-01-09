@@ -1,50 +1,20 @@
-import React, {useState, useEffect, useRef} from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { HashLink as HLink} from 'react-router-hash-link';
+import React, {useState, useEffect} from 'react';
 
 import styled from 'styled-components';
 import logo from '../assets/frozlintell.png'
-
-
-
-// function useComponentVisible(initialIsVisible) {
-// 	const [ isComponentVisible, setIsComponentVisible ] = useState(initialIsVisible);
-// 	// const ref = useRef();
-
-// 	const handleClickOutside = (event) => {
-// 		if (ref.current && !ref.current.contains(event.target)) {
-// 			setIsComponentVisible(false);
-// 		}
-//     }
-
-//     return { ref, isComponentVisible, setIsComponentVisible };
-// }
+import { Link, withRouter } from 'react-router-dom';
+import { HashLink as HLink} from 'react-router-hash-link';
 
 function Nav (props)  {
 
-	// const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
-
     //! to be componentised-----------------------------------
-    // Declare a new state variable with the "useState" Hook
 	const [scrollPosY, setScrollPosY] = useState(window.scrollY)
 	const [width, setWidth] = useState(window.innerWidth);
 	const [navOpen, setNavOpen] = useState(false);
 
-	// let storename = props.match.params.storename
-	// let home = props.location.pathname.includes('store') ? 
-	// 	`/store/${storename}`:
-	// 	`/preview/${storename}`
-
-    
-
     useEffect(() => {
-        /* Inside of a "useEffect" hook add an event listener that updates
-        the "width" state variable when the window size changes */
         window.addEventListener("scroll", () => setScrollPosY(window.scrollY))
         window.addEventListener("resize", () => setWidth(window.innerWidth));
-        /* passing an empty array as the dependencies of the effect will cause this
-        effect to only run when the component mounts, and not each time it updates.
-        We only want the listener to be added once */
     }, [])
     //! to be componentised-----------------------------------
     
@@ -69,21 +39,10 @@ function Nav (props)  {
 							</li>
 							<li>
 								<HLink smooth to={"/#wrapper"}>Categories</HLink>
-								{/* {console.log(props)} */}
 							</li>
-							{/* <li>
-								<Link to="/about">About</Link>
-							</li> */}
 							<li>
 								<HLink smooth to={"/login"}>Sellers</HLink>
 							</li>
-							{/* <li>
-								<Link to="/your/closet">Your Closet</Link>
-							</li>
-							<li>
-								<Link to="/your/collection">Contact Us</Link>
-							</li> */}
-
 						</ul>
 					</div>
 				</div>

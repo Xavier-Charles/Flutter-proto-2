@@ -84,6 +84,7 @@ exports.signUpUser = (request, response) => {
                 email: newUser.email,
                 storename: newUser.storename,
                 categories: [],
+                products: [],
                 activated: false,
                 createdAt: new Date().toISOString(),
                 username: userId,
@@ -229,33 +230,8 @@ exports.updateUserDetails = (request, response) => {
 exports.activateUser = (request, response) => {
     
     let document = db.doc(`/users/${request.params.username}`)
-    document.update({activated: true})
-    
-    db
-        .doc(`/users/${request.params.username}`)
-        .get()
-        .then((document) => {
-                let doc = document.data()
-                const userCredentials = {
-                    firstName: doc.firstName,
-                    lastName: doc.lastName,
-                    phoneNumber: doc.phoneNumber,
-                    country: doc.country,
-                    email: doc.email,
-                    storename: doc.storename,
-                    categories: doc.categories,
-                    activated: true,
-                    activatedAt: new Date().toISOString(),
-                    createdAt: doc.createdAt,
-                    username: doc.username,
-                    userId: doc.username
-                };
 
-                return db
-                        .doc(`/activatedUsers/${doc.username}`)
-                        .set(userCredentials)
-                
-        })
+    document.update({activated: true})
         .then(()=> {
             response.json({message: 'Activated'});
         })
@@ -268,11 +244,6 @@ exports.activateUser = (request, response) => {
 }
 
 exports.getStore = (request, response) => {
-
-    // console.log(request.params.storename)
-    // return response.status(500).json({ 
-    //         message: "Testing"
-    //     })
     
     db
         .doc(`/storenames/${request.params.storename}`)
