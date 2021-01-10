@@ -29,7 +29,11 @@ const styles = (theme) => ({
 		paddingLeft: '2%'
 	},
 	flex: {
-		display: 'flex'
+		display: 'flex',
+    	boxSizing: 'border-box',
+		flexFlow: 'wrap',
+		alignItems: 'center',
+    	width: '98%'
 	},
 	none: {
 		fontSize: '2em',
@@ -56,8 +60,10 @@ const styles = (theme) => ({
 		color: 'white',
 		textAlign: 'center',
 		position: 'absolute',
-		top: 14,
-		right: 10
+		top: 12,
+		right: 10,
+		fontFamily: 'Roboto',
+		fontSize: 'large'
 	},
 	floatingButton: {
 		position: 'fixed',

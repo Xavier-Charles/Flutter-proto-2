@@ -74,12 +74,13 @@ const CardStyle = styled.div`
     display: block;
     position: relative;
     background-color: #fff;
-    width: 298px;
+    width: 300px;
     height: ${props => props.loaded ? 'auto' : '330px'};
-    max-height: 400px;
+    min-height: 300px;
     margin: 10px;
     border: 1px solid #000;
     font-family: 'Roboto';
+    box-sizing: border-box;
 
     .noclick{
         pointer-events:none;
@@ -87,11 +88,16 @@ const CardStyle = styled.div`
     
 
     .pic{
+        display: flex;
+        padding-bottom: 30px;
+        height: 320px;
+        align-items: center;
+        justify-content: center;
         
         img {
         
             max-width: 298px;
-            max-height: 400px;
+            max-height: 320px;
 
         }
     }
@@ -165,7 +171,7 @@ const CardStyle = styled.div`
         border: 1px solid #000;
 
         img {
-            max-width: calc(100% - 2px);
+            width: auto;
             max-height: 80vh;
 ;
         }
