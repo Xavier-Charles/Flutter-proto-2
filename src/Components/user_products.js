@@ -28,6 +28,9 @@ const styles = (theme) => ({
 		flexGrow: 1,
 		paddingLeft: '2%'
 	},
+	flex: {
+		display: 'flex'
+	},
 	none: {
 		fontSize: '2em',
 		width: '99vw',
@@ -351,6 +354,7 @@ class Products extends Component {
 					>
 						<AddCircleIcon style={{ fontSize: 60 }} />
 					</IconButton>
+
 					<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
 						<AppBar className={classes.appBar}>
 							<Toolbar>
@@ -470,7 +474,7 @@ class Products extends Component {
 						</form>
 					</Dialog>
 
-					<Grid container spacing={2}>
+					<Grid className={classes.flex}>
 						{this.state.products.length === 0 && <p className={classes.none}>No products added yet</p>}
 						{this.state.products.map((product, id) => (
 

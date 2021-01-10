@@ -135,10 +135,11 @@ class Dashboard extends Component {
 						view: this.viewHandler,
 						logout: this.logoutHandler
 					}} activated={this.state.activated} />
-					<div>{this.state.render ? 
-									<Account data={this.state}/> : 
-									<Products activated={this.state.activated} categories={this.state.categories} store={this.state.storename} />}
-					</div>
+					{
+						this.state.render ? 
+						<Account data={this.state}/> : 
+						<Products activated={this.state.activated} categories={this.state.categories} store={this.state.storename} />
+					}
 				</div>
 			);
 		}

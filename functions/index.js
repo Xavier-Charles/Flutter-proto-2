@@ -1,8 +1,6 @@
-const functions = require('firebase-functions');
-
 const cors = require('cors');
 const app = require('express')();
-
+const functions = require('firebase-functions');
 
 let allowedOrigins = ['http://localhost:3000',
                       'http://127.0.0.1:5001/flutter-proto-2/us-central1/api',
@@ -29,44 +27,38 @@ app.use(cors({
   }
 }));
 
+const auth = require('./util/auth');
+const firebase = require('firebase');
+const config = require('./util/config');
+const { getRiderDetail } = require('./APIs/dispatchRiders')
 const {
     getAllProducts, getAllUserProducts, getOneProduct, postOneProduct, deleteProduct, editProduct
 } = require('./APIs/BKNDproducts')
 const {
     loginUser, signUpUser, uploadProfilePhoto, getUserDetail, updateUserDetails, activateUser, getStore
 } = require('./APIs/users')
-const auth = require('./util/auth');
-
-const config = require('./util/config');
-
-const firebase = require('firebase');
 
 firebase.initializeApp(config);
-
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
 
 //todo find a way to replace "auth" in get methods
 app.get('/products', getAllProducts); // all products from all stores
 app.post('/products', getAllUserProducts); // all products from just one store
-app.get('/products/:productId', auth, getOneProduct);
 app.post('/product', auth, postOneProduct);
-app.delete('/del_product/:productId', auth, deleteProduct);
 app.put('/product/:productId', auth, editProduct);
-
-app.post('/login', loginUser);
-app.post('/signup', signUpUser);
+app.get('/products/:productId', auth, getOneProduct);
+app.delete('/del_product/:productId', auth, deleteProduct);
 
 app.get('/store/:storename', getStore);
 
-app.post('/user/image', auth, uploadProfilePhoto);
+app.post('/login', loginUser);
+app.post('/signup', signUpUser);
 app.get('/user', auth, getUserDetail);
 app.post('/user', auth, updateUserDetails);
 app.post('/activate/:username', activateUser)
+app.post('/user/image', auth, uploadProfilePhoto);
 
-// exports.api = functions.region('europe-west3').https.onRequest(app);
+app.get('/dispatchRider/:riderId', getRiderDetail)
+
 exports.apiz = functions.https.onRequest(app);
 exports.api = functions.https.onRequest(app);
 

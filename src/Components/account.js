@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import { Card, CardActions, CardContent, Divider, Button, Grid, TextField } from '@material-ui/core';
@@ -96,6 +96,7 @@ class account extends Component {
 			buttonLoading: false,
 			imageError: '',
 			errors: [],
+			dispatchRider: {},
 			activated: false
 		};
 	}
@@ -124,6 +125,10 @@ class account extends Component {
 					this.setState({uiLoading: true})
 					await verify_trans(params.get('transaction_id'), response.data.userCredentials, 20, 'USD')
 				}
+				axios
+					.get(urlhandler(`/dispatchRider/${response.data.userCredentials.dispatchRider}`))
+					.then ((res) => this.setState({dispatchRider: res.data.userCredentials}))
+					.catch(err => console.log(err))
 			})
 			.catch((error) => {
 				if (error.response === undefined){
@@ -193,38 +198,6 @@ class account extends Component {
 				});
 			});
 	}
-
-	profilePictureHandler = (event) => {
-		event.preventDefault();
-		this.setState({
-			uiLoading: true
-		});
-		authMiddleWare(this.props.history);
-		const authToken = localStorage.getItem('AuthToken');
-		let form_data = new FormData();
-		form_data.append('image', this.state.image);
-		form_data.append('content', this.state.content);
-		axios.defaults.headers.common = { Authorization: `${authToken}` };
-		axios
-			.post(urlhandler('/user/image'), form_data, {
-				headers: {
-					'content-type': 'multipart/form-data'
-				}
-			})
-			.then(() => {
-				window.location.reload();
-			})
-			.catch((error) => {
-				if (error.response.status === 403) {
-					this.props.history.push('/login');
-				}
-				console.log(error);
-				this.setState({
-					uiLoading: false,
-					imageError: 'Error in posting the data'
-				});
-			});
-	};
 
 	updateFormValues = (event) => {
 		event.preventDefault();
@@ -299,36 +272,22 @@ class account extends Component {
 											color="primary"
 											type="submit"
 											size="small"
-											startIcon={<CloudUploadIcon />}
+											startIcon={<LockOpenIcon />}
 											className={classes.activateButon}
 											disabled= {this.state.activated}
 											onClick={this.handleActivate}
 										>
 											Activate
 										</Button>
-									</div>
-									{/* //! Profile picture */}
-									{/* <Button
-										variant="outlined"
-										color="primary"
-										type="submit"
-										size="small"
-										startIcon={<CloudUploadIcon />}
-										className={classes.uploadButton}
-										onClick={this.profilePictureHandler}
-									>
-										Upload Photo
-									</Button>
-									<input type="file" onChange={this.handleImageChange} />
-
-									{this.state.imageError ? (
-										<div className={classes.customError}>
-											{' '}
-											Wrong Image Format || Supported Format are PNG and JPG
+										<div>
+											<Typography className={classes.locationText} gutterBottom variant="h5">
+												{`${JSON.stringify(this.state.dispatchRider) !== "{}" ? 
+													"Dispatch Rider: " + 
+													this.state.dispatchRider.firstName + 
+													" " + this.state.dispatchRider.lastName : ""}`}
+											</Typography>
 										</div>
-									) : (
-										false
-									)} */}
+									</div>
 								</div>
 							</div>
 							<div className={classes.progress} />

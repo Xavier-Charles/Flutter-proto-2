@@ -119,14 +119,6 @@ const PostStyle = styled.div`
         border: 1px solid #000;
     }
 
-    .pic{
-        
-        img {
-        
-            max-width: 300px;
-        }
-    }
-
     .buttons {
         display: flex;
         flex-wrap: wrap;

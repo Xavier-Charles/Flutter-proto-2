@@ -6,12 +6,12 @@ export default function Products(props) {
 
     const [viewOpen, setViewOpen] = useState(false)
     const [delOpen, setDelOpen] = useState(false)
-    // console.log(props.data)
+    const [loaded, setLoaded] = useState(false);
 
     return(
-            <CardStyle id={props.id} onClick={(event) => {setViewOpen(!viewOpen)}}>
+            <CardStyle loaded={loaded} id={props.id} onClick={(event) => {setViewOpen(!viewOpen)}}>
                 <div className="pic">
-                    <img src={props.data.img} alt=""></img>
+                    <img src={props.data.img} alt="" onLoad={() => setLoaded(true)}/>
                 </div>
                 <div className="buttons">
                     <a className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
@@ -74,8 +74,8 @@ const CardStyle = styled.div`
     display: block;
     position: relative;
     background-color: #fff;
-    min-width: 300px;
-    height: 330px;
+    width: 298px;
+    height: ${props => props.loaded ? 'auto' : '330px'};
     max-height: 400px;
     margin: 10px;
     border: 1px solid #000;

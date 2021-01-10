@@ -34,6 +34,7 @@ exports.loginUser = (request, response) => {
 };
 
 exports.signUpUser = (request, response) => {
+
     const newUser = {
         firstName: request.body.firstName,
         lastName: request.body.lastName,
@@ -50,7 +51,7 @@ exports.signUpUser = (request, response) => {
 
 	if (!valid) return response.status(400).json(errors);
 
-    let token, userId;
+    let token, userId, dispatchRider;
 
     db
         .doc(`/storenames/${newUser.storename}`)
@@ -70,8 +71,18 @@ exports.signUpUser = (request, response) => {
                     );
             }
         })
-        .then((data) => {
+        .then(async(data) => {
             userId = data.user.uid;
+            
+            dispatchRider = await db.collection(`/dispatchRiders`)
+                    .where("country", "==", request.body.country)
+                    .limit(1)
+                    .get()
+                    .then((doc) => {
+                        let id
+                        doc.forEach(doc => id = doc.id)
+                        return id
+                    })
             return data.user.getIdToken();
         })
         .then((idtoken) => {
@@ -83,6 +94,7 @@ exports.signUpUser = (request, response) => {
                 country: newUser.country,
                 email: newUser.email,
                 storename: newUser.storename,
+                dispatchRider,
                 categories: [],
                 products: [],
                 activated: false,
@@ -98,12 +110,15 @@ exports.signUpUser = (request, response) => {
             return response.status(201).json({ token });
         })
         .catch((err) => {
-			console.error(err);
-			if (err.code === 'auth/email-already-in-use') {
-				return response.status(400).json({ email: 'Email already in use' });
-			}else if (err.code === 'storename-error' ){
+            console.error(err);
+            if (err.code === 'storename-error'){
                 return response.status(400).json({ storename: 'This storename already exists' });
+			}else if (err.code === 'auth/email-already-in-use') {
+                db.doc(`/storenames/${request.body.storename}`).delete()
+				return response.status(400).json({ email: 'Email already in use' });
             } else {
+                admin.auth().deleteUser(userId)
+                db.doc(`/storenames/${request.body.storename}`).delete()
 				return response.status(500).json({ general: 'Something went wrong, please try again' });
 			}
 		});
