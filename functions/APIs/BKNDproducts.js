@@ -19,7 +19,9 @@ exports.getAllProducts = async (request, response) => {
                     description: doc.data().description,
                     createdAt: doc.data().createdAt,
                     category: doc.data().category,
-                    link: doc.data().link
+                    link: doc.data().link,
+                    subaccount_id: doc.data().subaccount_id,
+                    dispatchSubaccount_id: doc.data().dispatchSubaccount_id
 				});
 			});
 			return response.json(products);
@@ -170,6 +172,7 @@ exports.postOneProduct = (request, response) => {
                 const newProductItem = {
                     id: pId,
                     username: request.user.username,
+                    subaccount_id: request.user.subaccount_id,
                     name: fields.name,
                     img,
                     price: fields.price,

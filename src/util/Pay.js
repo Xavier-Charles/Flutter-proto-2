@@ -88,17 +88,33 @@ export const verify_activate = async (tx_id, user) => {
 
  
 export const checkout = async (amount, customer, cart) => {
+        
+    var subaccounts = []
+    cart.map((item, id) => {
+        subaccounts.push({
+            id: item.subaccount_id,
+            transaction_charge_type: "flat_subaccount",
+            transaction_charge: parseInt(item.price) * 0.975
+            })
+        subaccounts.push({
+            id: item.dispatchSubaccount_id,
+            transaction_charge_type: "flat_subaccount",
+            transaction_charge: parseInt(item.price) * 0.025 * 0.8
+            })
+        })
 
     const PayData = {
 			"tx_ref": v4(),
-			"amount": amount,
+			"amount": amount.total,
 			"currency": "USD",
 			"redirect_url": `${window.location.href}`,
 			"payment_options":"account, card, banktransfer, mpesa, qr, ussd, credit, barter, mobilemoneyghana, payattitude, mobilemoneyfranco, paga, 1voucher",
 			"customer":{
 				"email":customer.email,
-				"phonenumber":customer.phoneNumber
-			},
+                "phonenumber":customer.phoneNumber,
+                "name": customer.address
+            },
+            subaccounts,
 			"customizations":{
 				"title":"Jumga",
 				"description":"",

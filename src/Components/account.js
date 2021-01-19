@@ -357,7 +357,7 @@ class account extends Component {
 									<Grid item md={6} xs={12}>
 										<TextField
 											fullWidth
-											label="Account Number"
+											label="Account Number (Dollar acc. only)"
 											name="accountNumber"
 											variant="outlined"
 											value={this.state.accountNumber}

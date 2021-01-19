@@ -16,7 +16,11 @@ var n = {}
 function Checkout (props) {
     const {cart, setCart} = useContext(CartContext)
     const [num, setNum] = useState({})
-    const [formState, setFormState] = useState({})
+    const [formState, setFormState] = useState({
+        email: "",
+        phoneNumber: "",
+        address: ""
+    })
     const [total, setTotal] = useState({
         total: 0,
         subTotal: 0,
@@ -97,7 +101,9 @@ function Checkout (props) {
 								<TextField
 									variant="outlined"
 									required
-									fullWidth
+                                    fullWidth
+                                    multiline
+                                    rows={4}
 									id="address"
 									label="Address"
 									name="address"
@@ -116,8 +122,12 @@ function Checkout (props) {
     }
 
     function handleSubmit() {
+        console.log('called')
+//////! Do this errors
         if (formState.email && formState.phoneNumber && formState.address){
-            checkout(total.total, formState, cart)
+            checkout(total, formState, cart)
+        }else {
+            setFormState({...formState, errors: []})
         }
     }
 
@@ -170,19 +180,21 @@ function Checkout (props) {
                         <input type="text" name="promo" placholder="Enter Code" />
                         <a href="#" className="btn"></a>
                     </div> */}
-                    {form()}
                     {Object.keys(num).length === 0 ? 
                         (<p>No Products in your Cart yet</p>):
                         (
+                        <React.Fragment>
+                        {form()}
                         <div className="subtotal cf">
                             <ul>
                                 <li className="totalRow"><span className="label">Subtotal</span><span className="value">${total.subTotal}</span></li>
                                 <li className="totalRow"><span className="label">Shipping</span><span className="value">${total.shipping}</span></li>
                                 <li className="totalRow"><span className="label">Tax</span><span className="value">${total.tax}</span></li>
                                 <li className="totalRow final"><span className="label">Total</span><span className="value">${total.total}</span></li>
-                                <li className="totalRow"><a href="#" onClick={handleSubmit} className="btn continue">Checkout</a></li>
+                                <li className="totalRow"><a id="submit" href="#submit" onClick={handleSubmit} className="btn continue">Checkout</a></li>
                             </ul>
                         </div>
+                        </React.Fragment>
                         )}
                 </div>
             </CheckoutStyle>
@@ -218,7 +230,7 @@ const CheckoutStyle = styled.div`
     time, mark, audio, video {
     margin: 0;
     padding: 0;
-    border: 0;
+    /* border: 0; */
     font: inherit;
     font-size: 100%;
     vertical-align: baseline;
