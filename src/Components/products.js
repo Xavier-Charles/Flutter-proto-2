@@ -52,7 +52,7 @@ export default function Products(props) {
                 {Object.values(ProductData).map((item, id) => {
 
                     return(
-                        <ProductCard type="store" data={item} id={id}/>
+                        <ProductCard type="store" data={item} key={id}/>
                     )
                 })}
             </PostStyle>

@@ -5,30 +5,120 @@ import styled from 'styled-components'
 import { CartContext } from '../util/context'
 
 import { Link, withRouter } from 'react-router-dom';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
+import { checkout } from '../util/Pay';
 
+
+var t = {}
+var n = {}
 
 function Checkout (props) {
     const {cart, setCart} = useContext(CartContext)
     const [num, setNum] = useState({})
-    const [total, setTotal] = useState(0)
+    const [formState, setFormState] = useState({})
+    const [total, setTotal] = useState({
+        total: 0,
+        subTotal: 0,
+        tax: 0,
+        shipping: 0
+    })
 
+    // console.log(cart)
     useEffect(() => {
-        let n = {}
-        cart.map((item) => {
-            n[item.productId] = 1
-        })
+        let ids = cart.map(o => o.productId)
+        let filteredCart = cart.filter(({productId}, index) => !ids.includes(productId, index + 1))
+
+        filteredCart.map((item) => {n[item.productId] = 1})
+        if (ids.length !== filteredCart.length) setCart(filteredCart)
         setNum({...num, ...n})
+        handleTotal(filteredCart)
     }, [cart]);
 
     function handleNum (e, id) {
-        let n = {}
-        n[id] = e.target.value
+        n[id] = e.target.value? e.target.value : 0
         setNum({...num, ...n})
-        setTotal(cart.reduce((cur, item) =>cur + parseInt(item.price) * num[item.productId] , 0))
+        handleTotal(cart)
     }
 
-    function handleTotal () {
-        return cart.reduce((cur, item) =>cur + parseInt(item.price) * num[item.productId] , 0)
+    function handleTotal (carte) {
+        t.subTotal = carte.reduce((cur, item) => cur + parseInt(parseInt(item.price) * (n[item.productId]? n[item.productId] : 1) ) , 0)
+        t.shipping = parseInt((t.subTotal * 0.025).toFixed(0))
+        t.tax = parseInt((t.subTotal * 0.013).toFixed(0))
+        t.total = t.subTotal + t.shipping + t.tax
+        setTotal({...t})
+    }
+
+    const handleChange = (event) => {
+		setFormState({
+			[event.target.name]: event.target.value,
+			errors: []
+		});
+	};
+
+    function form() {
+        let errors = formState.errors
+        return (
+            <FormStyle>
+            <form className="form" noValidate>
+						<Grid container spacing={2}>
+							<Grid item xs={12} sm={6}>
+								<TextField
+									variant="outlined"
+									required
+									fullWidth
+									id="phoneNumber"
+									label="Phone Number"
+									name="phoneNumber"
+									autoComplete="tel"
+									pattern="[7-9]{1}[0-9]{9}"
+									helperText={errors ? errors.phoneNumber: ""}
+									error={errors && errors.phoneNumber ? true : false}
+									onChange={handleChange}
+								/>
+							</Grid>
+
+							<Grid item xs={12}>
+								<TextField
+									variant="outlined"
+									required
+									fullWidth
+									id="email"
+									label="Email Address"
+									name="email"
+									autoComplete="email"
+									helperText={errors ? errors.email: ""}
+									error={errors && errors.email ? true : false}
+									onChange={handleChange}
+								/>
+							</Grid>
+
+                            <Grid item xs={12}>
+								<TextField
+									variant="outlined"
+									required
+									fullWidth
+									id="address"
+									label="Address"
+									name="address"
+									autoComplete="address"
+									helperText={errors ? errors.address: ""}
+									error={errors && errors.address ? true : false}
+									onChange={handleChange}
+								/>
+							</Grid>
+						</Grid>
+
+					</form>
+            </FormStyle>
+        )
+        
+    }
+
+    function handleSubmit() {
+        if (formState.email && formState.phoneNumber && formState.address){
+            checkout(total.total, formState, cart)
+        }
     }
 
     return (
@@ -55,18 +145,18 @@ function Checkout (props) {
                                                             min="0"
                                                             onChange={(e) => handleNum(e, item.productId)} 
                                                             className="qty" 
-                                                            value={num[item.productId] ? num[item.productId]: 0}
+                                                            value={num[item.productId]}
                                                     />
-                                                    {` x ${item.price}`}
+                                                    {` x $${item.price}`}
                                                 </p>
                                                 <p className="stockStatus"> In Stock</p>
                                             </div>  
 
                                             <div className="prodTotal cartSection">
-                                                <p>{item.price * num[item.productId]}</p>
+                                                <p>${item.price * num[item.productId]}</p>
                                             </div>
                                             <div className="cartSection removeWrap">
-                                                <a onClick={() => setCart(cart.filter((product) => product.id !== item.id))} className="remove">x</a>
+                                                <a onClick={() => setCart(cart.filter((product) => product.productId !== item.productId))} className="remove">x</a>
                                             </div>
                                         </div>
                                     </li>
@@ -80,20 +170,20 @@ function Checkout (props) {
                         <input type="text" name="promo" placholder="Enter Code" />
                         <a href="#" className="btn"></a>
                     </div> */}
-                    
-                    <div className="subtotal cf">
-                        <ul>
-                            <li className="totalRow">
-                                <span className="label">Subtotal</span>
-                                <span className="value">${handleTotal()}
-                                </span>
-                            </li>
-                            <li className="totalRow"><span className="label">Shipping</span><span className="value">$5.00</span></li>
-                            <li className="totalRow"><span className="label">Tax</span><span className="value">$4.00</span></li>
-                            <li className="totalRow final"><span className="label">Total</span><span className="value">{handleTotal() + 5 + 4}</span></li>
-                            <li className="totalRow"><a href="#" className="btn continue">Checkout</a></li>
-                        </ul>
-                    </div>
+                    {form()}
+                    {Object.keys(num).length === 0 ? 
+                        (<p>No Products in your Cart yet</p>):
+                        (
+                        <div className="subtotal cf">
+                            <ul>
+                                <li className="totalRow"><span className="label">Subtotal</span><span className="value">${total.subTotal}</span></li>
+                                <li className="totalRow"><span className="label">Shipping</span><span className="value">${total.shipping}</span></li>
+                                <li className="totalRow"><span className="label">Tax</span><span className="value">${total.tax}</span></li>
+                                <li className="totalRow final"><span className="label">Total</span><span className="value">${total.total}</span></li>
+                                <li className="totalRow"><a href="#" onClick={handleSubmit} className="btn continue">Checkout</a></li>
+                            </ul>
+                        </div>
+                        )}
                 </div>
             </CheckoutStyle>
             </React.Fragment>
@@ -101,6 +191,14 @@ function Checkout (props) {
 }
 
 export default withRouter(Checkout);
+
+const FormStyle = styled.div`
+    .form {
+        width : 80%;
+        margin: 0 auto;
+
+    }
+`
 
 const CheckoutStyle = styled.div`
 

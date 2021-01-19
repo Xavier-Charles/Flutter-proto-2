@@ -12,7 +12,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import axios from 'axios';
-import SelectCurrency from '../Components/selectCountry';
+import SelectCountry from '../Components/selectCountry';
 
 
 const styles = (theme) => ({
@@ -212,14 +212,14 @@ class signUp extends Component {
 							</Grid>
 
 							<Grid item xs={12}>
-								<SelectCurrency 
+								<SelectCountry 
 									margin="dense"
 									name="country"
 									value={this.state.country}
 									onChange={this.handleChange}
 									helperText={errors.country}
 									error={errors.country ? true : false}
-								></SelectCurrency>
+								></SelectCountry>
 							</Grid>
 
 							<Grid item xs={12}>

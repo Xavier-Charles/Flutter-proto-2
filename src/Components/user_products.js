@@ -168,6 +168,7 @@ class Products extends Component {
 		axios
 			.post(urlhandler('/products'), {store: this.props.store})
 			.then((response) => {
+				console.log(response)
 				this.setState({
 					products: response.data,
 					uiLoading: false
@@ -210,26 +211,29 @@ class Products extends Component {
 
 	handleViewOpen() {
 		this.setState({
-			categories: this.props.categories
+			categories: ["Accessories","Bags", "Tops", "Skirts", "Trousers", "Shoes"]
+
+			//* Dead functionality-----------------------------------
+			// categories: this.props.categories 
 		});
 
-		authMiddleWare(this.props.history);
-		const authToken = localStorage.getItem('AuthToken');
-		axios.defaults.headers.common = { Authorization: `${authToken}` };
-		axios
-			.get(urlhandler('/user'))
-			.then((response) => {
-				this.setState({
-					categories: response.data.userCredentials.categories,
-				});
-			})
-			.catch((error) => {
-				if(error.response.status === 403) {
-					this.props.history.push('/login')
-				}
-				console.log(error);
-				this.setState({ errorMsg: 'Error in retrieving the data' });
-			});
+		// authMiddleWare(this.props.history);
+		// const authToken = localStorage.getItem('AuthToken');
+		// axios.defaults.headers.common = { Authorization: `${authToken}` };
+		// axios
+		// 	.get(urlhandler('/user'))
+		// 	.then((response) => {
+		// 		this.setState({
+		// 			categories: response.data.userCredentials.categories,
+		// 		});
+		// 	})
+		// 	.catch((error) => {
+		// 		if(error.response.status === 403) {
+		// 			this.props.history.push('/login')
+		// 		}
+		// 		console.log(error);
+		// 		this.setState({ errorMsg: 'Error in retrieving the data' });
+		// 	});
     }
     
     handleImageChange = (event) => {
@@ -437,7 +441,7 @@ class Products extends Component {
                                         fullWidth
                                         type="number"
 										id="productPrice"
-										label="Product Price &#x20A6;"
+										label="Product Price $"
 										name="price"
 										autoComplete="productPrice"
 										helperText={errors.price}

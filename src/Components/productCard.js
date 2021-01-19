@@ -1,81 +1,69 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import styled from 'styled-components'
 import dayjs from 'dayjs';
-import {addProduct} from '../util/cart'
 import { CartContext } from '../util/context'
 
 export default function Products(props) {
 
+    const {cart, setCart} = useContext(CartContext)
     const [viewOpen, setViewOpen] = useState(false)
     const [delOpen, setDelOpen] = useState(false)
     const [loaded, setLoaded] = useState(false);
 
     return(
+        <CardStyle loaded={loaded} onClick={(e) => {setViewOpen(!viewOpen)}}>
+            <div className="pic">
+                <img src={props.data.img} alt="" onLoad={() => setLoaded(true)}/>
+            </div>
+            <div className="buttons">
+                <a className="price" link=""><p><span>$</span>{props.data.price}</p></a>
+                {props.type === 'dashboard' ?(
+                            <React.Fragment>
+                                <a className="contact" link=""><p>Edit</p></a>
+                                <a className="contact" link=""><p>Delete</p></a>
+                            </React.Fragment>
+                            
+                        ): ("")}
+            </div>
 
-        <CartContext.Consumer >
-            {({cart, setCart}) => {
-                return(
-            <CardStyle loaded={loaded} id={props.key} onClick={(e) => {setViewOpen(!viewOpen)}}>
-                <div className="pic">
-                    <img src={props.data.img} alt="" onLoad={() => setLoaded(true)}/>
-                </div>
-                <div className="buttons">
-                    <a className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
-                    {props.type === 'dashboard' ?(
-                                <React.Fragment>
-                                    <a className="contact" link=""><p>Edit</p></a>
-                                    <a className="contact" link=""><p>Delete</p></a>
-                                </React.Fragment>
-                                
-                            ): (
-                                <a className="contact" onClick={() => setCart([...cart, props.data])}><p>Add to Cart</p></a>
-                            )}
-                </div>
-
-                <div id="open-modal" className={`modal-window ${viewOpen && 'modal-window-open'}`}>
+            <div id="open-modal" className={`modal-window ${viewOpen && 'modal-window-open'}`}>
+                <div>
                     <div>
-                        <div>
-                            <img src={props.data.img}></img>
-                        </div>
-                        <div className="content">
-                            <h1>{props.data.name}</h1>
-                            <p>{props.data.description}</p>
-                            {/* <p><span>&#8358;</span>{props.data.price}</p> */}
-                            <p>{props.type === 'dashboard' && dayjs(props.data.createdAt).fromNow() }</p>
-                        </div>
-                        <div className="buttons">
-                            {props.type === 'dashboard' ?(
-                                <React.Fragment>
-                                    <a className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
-                                    <a onClick={() => props.Edit(props.data)} className="contact" link=""><p>Edit</p></a>
-                                    <a onClick={() => setDelOpen(true)} className="contact" link=""><p>Delete</p></a>
-                                </React.Fragment>
-                                
-                            ): (
-                                <React.Fragment>
-                                <a onClick={() => addProduct(props.data)} className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
-                                <a onClick={() => addProduct(props.data)} className="contact" link="">
-                                    <p>Add to Cart</p>
-                                </a>
-                                </React.Fragment>
-                            )}
-                        </div>
+                        <img src={props.data.img}></img>
                     </div>
-                </div>
-                
-                <div className={`delete ${delOpen && 'delete-open'}`}>
-                    <div className="block">
-                        <p>Are you sure?</p>
-                        <ul>
-                            <li onClick={() => props.Delete(props.data)} className="red">Delete</li>
-                            <li onClick={() => setDelOpen(false)}>Cancel</li>
-                        </ul>
+                    <div className="content">
+                        <h1>{props.data.name}</h1>
+                        <p>{props.data.description}</p>
+                        {/* <p><span>$</span>{props.data.price}</p> */}
+                        <p>{props.type === 'dashboard' && dayjs(props.data.createdAt).fromNow() }</p>
                     </div>
+                        {props.type === 'dashboard' ?(
+                            <div className="buttons">
+                                <a className="price" link=""><p><span>$</span>{props.data.price}</p></a>
+                                <a onClick={() => props.Edit(props.data)} className="contact" link=""><p>Edit</p></a>
+                                <a onClick={() => setDelOpen(true)} className="contact" link=""><p>Delete</p></a>
+                            </div>
+                            
+                        ): (
+                            <div onClick={() => setCart([...cart, props.data])} className="buttons">
+                                <a onClick={() => setCart([...cart, props.data])} className="price" link=""><p><span>$</span>{props.data.price}</p></a>
+                                <a onClick={() => setCart([...cart, props.data])} className="contact" link=""><p>Add to Cart</p></a>
+                            </div>
+                        )}
                 </div>
-            </CardStyle>
-            )}}
-        </CartContext.Consumer >
-       )
+            </div>
+            
+            <div className={`delete ${delOpen && 'delete-open'}`}>
+                <div className="block">
+                    <p>Are you sure?</p>
+                    <ul>
+                        <li onClick={() => props.Delete(props.data)} className="red">Delete</li>
+                        <li onClick={() => setDelOpen(false)}>Cancel</li>
+                    </ul>
+                </div>
+            </div>
+        </CardStyle>
+    )
 }
 
 const CardStyle = styled.div`

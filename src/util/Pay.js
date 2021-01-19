@@ -87,11 +87,11 @@ export const verify_activate = async (tx_id, user) => {
     }
 
  
-export const checkout = async (amount, customer) => {
+export const checkout = async (amount, customer, cart) => {
 
     const PayData = {
 			"tx_ref": v4(),
-			"amount": "20",
+			"amount": amount,
 			"currency": "USD",
 			"redirect_url": `${window.location.href}`,
 			"payment_options":"account, card, banktransfer, mpesa, qr, ussd, credit, barter, mobilemoneyghana, payattitude, mobilemoneyfranco, paga, 1voucher",
