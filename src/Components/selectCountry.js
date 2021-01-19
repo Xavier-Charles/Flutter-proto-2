@@ -16,25 +16,26 @@ const theme = createMuiTheme({
   }
 });
 
-export default function SelectCurrency (props) {
+export default function SelectCountry (props) {
 
     return (
         <ThemeProvider theme={theme}>
             <FormControl fullWidth variant="outlined">
-                <InputLabel id="select-label">Currency</InputLabel>
+                <InputLabel id="select-label">Country</InputLabel>
                 <Select
-                    label="Currency"
+                    label="Country"
                     required
-                    id="currency"
+                    id="Country"
+                    disabled={props.disabled}
                     name={props.name}
                     value={props.value}
                     onChange={props.onChange}
                     error={props.error}
                 >
-                    <MenuItem value={'Nigeria'}>Nigerian Naira (&#8358;) </MenuItem>
-                    <MenuItem value={'Ghana'}>Ghana Cedis (GH&#8373;)</MenuItem>
-                    <MenuItem value={'Kenya'}>Kenyan Shilling (Ksh)</MenuItem>
-                    <MenuItem value={'United Kingdom'}>Pound Sterling (&#163;)</MenuItem>
+                    <MenuItem value={'Nigeria'}>Nigeria</MenuItem>
+                    <MenuItem value={'Ghana'}>Ghana</MenuItem>
+                    <MenuItem value={'Kenya'}>Kenya</MenuItem>
+                    <MenuItem value={'United Kingdom'}>United Kingdom</MenuItem>
                 </Select>
             </FormControl>  
         </ThemeProvider>

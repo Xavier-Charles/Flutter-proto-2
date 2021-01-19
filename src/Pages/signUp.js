@@ -12,7 +12,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import axios from 'axios';
-import SelectCurrency from '../Components/select';
+import SelectCurrency from '../Components/selectCountry';
 
 
 const styles = (theme) => ({

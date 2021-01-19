@@ -9,8 +9,9 @@ import { Card, CardActions, CardContent, Divider, Button, Grid, TextField } from
 import clsx from 'clsx';
 import axios from 'axios';
 import { authMiddleWare } from '../util/auth';
-import SelectCurrency from './select';
-import { verify_trans, activate } from '../util/Pay';
+import SelectCountry from './selectCountry';
+import SelectBank from './selectBank';
+import { verify_activate, activate } from '../util/Pay';
 
 const styles = (theme) => ({
 	overrides: {
@@ -79,13 +80,6 @@ const urlhandler = (url) => {
 	return process.env.NODE_ENV === "development" ?
 					url : process.env.REACT_APP_PRODUCTION_URL + url
 }
-
-const getBanks = (country) => {
-	// let 
-	// switch country
-	axios
-		.get(`https://api.flutterwave.com/v3/banks/country/${country}`)
-}
 class account extends Component {
 	constructor(props) {
 		super(props);
@@ -103,7 +97,10 @@ class account extends Component {
 			imageError: '',
 			errors: [],
 			dispatchRider: {},
-			activated: false
+			activated: false,
+			banks: [],
+			accountNumber: '',
+			bank: {}
 		};
 	}
 
@@ -123,14 +120,31 @@ class account extends Component {
 					country: response.data.userCredentials.country,
 					storename: response.data.userCredentials.storename,
 					activated: response.data.userCredentials.activated,
+					bank: response.data.userCredentials.bank ? response.data.userCredentials.bank: "",
+					accountNumber: response.data.userCredentials.accountNumber ? response.data.userCredentials.accountNumber: "",
+					subaccount_id: response.data.userCredentials.subaccount_id ? response.data.userCredentials.subaccount_id: "",
 					uiLoading: false
 				});
 				let params = new URLSearchParams(window.location.search);
 				
 				if (params.get('status') === 'successful' && !response.data.userCredentials.activated) {
 					this.setState({uiLoading: true})
-					await verify_trans(params.get('transaction_id'), response.data.userCredentials, 20, 'USD')
+					await verify_activate(params.get('transaction_id'), response.data.userCredentials, 20, 'USD')
 				}
+
+				const getBanks = (country) => {
+					axios.defaults.headers.common = { Authorization: `Bearer ${process.env.NODE_ENV === 'development'? process.env.REACT_APP_FLUTTER_S_KEY_TEST : process.env.REACT_APP_FLUTTER_S_KEY}` };
+					let countries = {Nigeria: "NG", "United Kingdom" : "UK", Kenya: "KE", Ghana: "GH"}
+					axios
+						.get(`https://nameless-shelf-51198.herokuapp.com/https://api.flutterwave.com/v3/banks/${countries[country]}`)
+						.then((res) => {
+							this.setState({banks: res.data.data})
+						})
+						.catch(err => console.log({err}))
+				}
+
+				getBanks(response.data.userCredentials.country)
+
 				axios
 					.get(urlhandler(`/dispatchRider/${response.data.userCredentials.dispatchRider}`))
 					.then ((res) => this.setState({dispatchRider: res.data.userCredentials}))
@@ -161,52 +175,14 @@ class account extends Component {
 
 	handleActivate = async (event) => {
 		event.preventDefault();
-		this.setState({
-			uiLoading: true
-		});
-
-		// authMiddleWare(this.props.history);
-		// const authToken = localStorage.getItem('AuthToken');
-		await activate(20, "USD", {email: this.state.email, phoneNumber: this.state.phoneNumber})
-		this.setState({
-					uiLoading: false
-				});
-		// const PayData = {
-		// 	"tx_ref": v4(),
-		// 	"amount": "20",
-		// 	"currency":"USD",
-		// 	"redirect_url": `${window.location.href}`,
-		// 	"payment_options":"account, card, banktransfer, mpesa, qr, ussd, credit, barter, mobilemoneyghana, payattitude, mobilemoneyfranco, paga, 1voucher",
-		// 	"meta":{
-		// 		"consumer_id":23,
-		// 		"consumer_mac":"92a3-912ba-1192a"
-		// 	},
-		// 	"customer":{
-		// 		"email":this.state.email,
-		// 		"phonenumber":this.state.phoneNumber,
-		// 		"store":this.state.storename
-		// 	},
-		// 	"customizations":{
-		// 		"title":"Jumga",
-		// 		"description":"Activate your store",
-		// 	}
-		// }
-
-		// axios.defaults.headers.common = { Authorization: `Bearer ${process.env.NODE_ENV === 'development'? process.env.REACT_APP_FLUTTER_S_KEY_TEST : process.env.REACT_APP_FLUTTER_S_KEY}` };
-		// axios
-		// 	.post(`https://nameless-shelf-51198.herokuapp.com/https://api.flutterwave.com/v3/payments`, PayData)
-		// 	.then((res) => {
-		// 		console.log(res)
-		// 		if (res.status === 200) {
-		// 			window.location.assign(res.data.data.link)
-		// 		}
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log({error});
-		// 		this.setState({
-		// 			uiLoading: false
-		// 		});
-		// 	});
+		if (this.state.accountNumber && this.state.bank){
+			this.setState({uiLoading: true});
+			await activate(this.state)
+			this.setState({uiLoading: false});
+		}else {
+			let err = "You have not specified your Account Number or Bank"
+			this.setState({errors: this.state.errors.push[{bank: err, accountNumber: err}]})
+		}
 	}
 
 	updateFormValues = (event) => {
@@ -224,13 +200,17 @@ class account extends Component {
 		authMiddleWare(this.props.history);
 		const authToken = localStorage.getItem('AuthToken');
 		axios.defaults.headers.common = { Authorization: `${authToken}` };
+
 		const formRequest = {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
 			country: this.state.country,
 			storename: this.state.storename,
 			phoneNumber: num,
-			email: this.state.email
+			email: this.state.email,
+			accountNumber: this.state.accountNumber,
+			bank: this.state.bank,
+			bankCode: this.state.banks.filter(bank => bank.name === this.state.bank)[0].code
 		};
 		axios
 			.post(urlhandler('/user'), formRequest)
@@ -372,43 +352,49 @@ class account extends Component {
 											error={errors.storename ? true : false}
 										/>
 									</Grid>
+									{/* for subaccounts */}
+
 									<Grid item md={6} xs={12}>
-										<SelectCurrency 
+										<TextField
+											fullWidth
+											label="Account Number"
+											name="accountNumber"
+											variant="outlined"
+											value={this.state.accountNumber}
+											onChange={this.handleChange}
+											helperText={errors.accountNumber}
+											disabled={this.state.subaccount_id.length !== 0}
+											error={errors.accountNumber ? true : false}
+										/>
+									</Grid>
+
+									{this.state.banks.length !== 0 && <Grid item md={6} xs={12}>
+										<SelectBank 
+											label="Bank"
+											id="select"
+											name="bank"
+											banks={this.state.banks}
+											value={this.state.bank}
+											onChange={this.handleChange}
+											helperText={errors.bank}
+											disabled={this.state.subaccount_id.length !== 0}
+											error={errors.bank ? true : false}
+										></SelectBank>
+									</Grid>}
+
+									<Grid item md={6} xs={12}>
+										<SelectCountry 
 											label="Country"
 											id="select"
 											name="country"
 											value={this.state.country}
 											onChange={this.handleChange}
 											helperText={errors.country}
+											disabled={this.state.subaccount_id.length !== 0}
 											error={errors.country ? true : false}
-										></SelectCurrency>
+										></SelectCountry>
 									</Grid>
 								</Grid>
-								//+ for subaccounts
-									<Grid item md={6} xs={12}>
-										<TextField
-											fullWidth
-											label="Account Number"
-											name="accountNumber"
-											variant="outlined"
-											value={this.state.accountNumber}
-											onChange={this.handleChange}
-											helperText={errors.accountNumber}
-											error={errors.accountNumber ? true : false}
-										/>
-									</Grid>
-									<Grid item md={6} xs={12}>
-										<TextField
-											fullWidth
-											label="Account Number"
-											name="accountNumber"
-											variant="outlined"
-											value={this.state.accountNumber}
-											onChange={this.handleChange}
-											helperText={errors.accountNumber}
-											error={errors.accountNumber ? true : false}
-										/>
-									</Grid>
 							</CardContent>
 							<Divider />
 							<CardActions />
