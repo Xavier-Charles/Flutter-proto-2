@@ -39,9 +39,8 @@ export default function Products(props) {
         return(
             <PostStyle>
                 {Object.values(ProductData).filter(e => e.category === props.category).map((item, id) => {
-
                     return(
-                        <ProductCard type="store" data={item} id={id}/>
+                        <ProductCard type="store" data={item} key={id}/>
                     )
                 })}
             </PostStyle>

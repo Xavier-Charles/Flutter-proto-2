@@ -41,12 +41,14 @@ function Nav (props)  {
 								<HLink smooth to={"/#wrapper"}>Categories</HLink>
 							</li>
 							<li>
+								<Link to={"/checkout"}>Cart</Link>
+							</li>
+							<li>
 								<HLink smooth to={"/login"}>Sellers</HLink>
 							</li>
 						</ul>
 					</div>
 				</div>
-
 			</div>
 		</NavStyle>
     )

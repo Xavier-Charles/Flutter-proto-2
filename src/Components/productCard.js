@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import styled from 'styled-components'
 import dayjs from 'dayjs';
+import {addProduct} from '../util/cart'
+import { CartContext } from '../util/context'
 
 export default function Products(props) {
 
@@ -9,7 +11,11 @@ export default function Products(props) {
     const [loaded, setLoaded] = useState(false);
 
     return(
-            <CardStyle loaded={loaded} id={props.id} onClick={(event) => {setViewOpen(!viewOpen)}}>
+
+        <CartContext.Consumer >
+            {({cart, setCart}) => {
+                return(
+            <CardStyle loaded={loaded} id={props.key} onClick={(e) => {setViewOpen(!viewOpen)}}>
                 <div className="pic">
                     <img src={props.data.img} alt="" onLoad={() => setLoaded(true)}/>
                 </div>
@@ -22,7 +28,7 @@ export default function Products(props) {
                                 </React.Fragment>
                                 
                             ): (
-                                <a className="contact" link=""><p>I want this!</p></a>
+                                <a className="contact" onClick={() => setCart([...cart, props.data])}><p>Add to Cart</p></a>
                             )}
                 </div>
 
@@ -47,9 +53,9 @@ export default function Products(props) {
                                 
                             ): (
                                 <React.Fragment>
-                                <a onClick={() => window.open(props.data.link, "_blank")} className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
-                                <a onClick={() => window.open(props.data.link, "_blank")} className="contact" link="">
-                                    <p>I want this!</p>
+                                <a onClick={() => addProduct(props.data)} className="price" link=""><p><span>&#8358;</span>{props.data.price}</p></a>
+                                <a onClick={() => addProduct(props.data)} className="contact" link="">
+                                    <p>Add to Cart</p>
                                 </a>
                                 </React.Fragment>
                             )}
@@ -67,6 +73,8 @@ export default function Products(props) {
                     </div>
                 </div>
             </CardStyle>
+            )}}
+        </CartContext.Consumer >
        )
 }
 

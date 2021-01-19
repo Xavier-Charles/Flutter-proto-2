@@ -6,12 +6,11 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import { Card, CardActions, CardContent, Divider, Button, Grid, TextField } from '@material-ui/core';
 
-import { v4 } from 'uuid'
 import clsx from 'clsx';
 import axios from 'axios';
 import { authMiddleWare } from '../util/auth';
 import SelectCurrency from './select';
-import { verify_trans } from '../util/Pay';
+import { verify_trans, activate } from '../util/Pay';
 
 const styles = (theme) => ({
 	overrides: {
@@ -79,6 +78,13 @@ const styles = (theme) => ({
 const urlhandler = (url) => {
 	return process.env.NODE_ENV === "development" ?
 					url : process.env.REACT_APP_PRODUCTION_URL + url
+}
+
+const getBanks = (country) => {
+	// let 
+	// switch country
+	axios
+		.get(`https://api.flutterwave.com/v3/banks/country/${country}`)
 }
 class account extends Component {
 	constructor(props) {
@@ -153,7 +159,7 @@ class account extends Component {
 		});
 	};
 
-	handleActivate = (event) => {
+	handleActivate = async (event) => {
 		event.preventDefault();
 		this.setState({
 			uiLoading: true
@@ -161,42 +167,46 @@ class account extends Component {
 
 		// authMiddleWare(this.props.history);
 		// const authToken = localStorage.getItem('AuthToken');
-		const PayData = {
-			"tx_ref": v4(),
-			"amount": "20",
-			"currency":"USD",
-			"redirect_url": `${window.location.href}`,
-			"payment_options":"account, card, banktransfer, mpesa, qr, ussd, credit, barter, mobilemoneyghana, payattitude, mobilemoneyfranco, paga, 1voucher",
-			"meta":{
-				"consumer_id":23,
-				"consumer_mac":"92a3-912ba-1192a"
-			},
-			"customer":{
-				"email":this.state.email,
-				"phonenumber":this.state.phoneNumber,
-				"store":this.state.storename
-			},
-			"customizations":{
-				"title":"Jumga",
-				"description":"Activate your store",
-			}
-		}
-
-		axios.defaults.headers.common = { Authorization: `Bearer ${process.env.NODE_ENV === 'development'? process.env.REACT_APP_FLUTTER_S_KEY_TEST : process.env.REACT_APP_FLUTTER_S_KEY}` };
-		axios
-			.post(`https://nameless-shelf-51198.herokuapp.com/https://api.flutterwave.com/v3/payments`, PayData)
-			.then((res) => {
-				console.log(res)
-				if (res.status === 200) {
-					window.location.assign(res.data.data.link)
-				}
-			})
-			.catch((error) => {
-				console.log({error});
-				this.setState({
+		await activate(20, "USD", {email: this.state.email, phoneNumber: this.state.phoneNumber})
+		this.setState({
 					uiLoading: false
 				});
-			});
+		// const PayData = {
+		// 	"tx_ref": v4(),
+		// 	"amount": "20",
+		// 	"currency":"USD",
+		// 	"redirect_url": `${window.location.href}`,
+		// 	"payment_options":"account, card, banktransfer, mpesa, qr, ussd, credit, barter, mobilemoneyghana, payattitude, mobilemoneyfranco, paga, 1voucher",
+		// 	"meta":{
+		// 		"consumer_id":23,
+		// 		"consumer_mac":"92a3-912ba-1192a"
+		// 	},
+		// 	"customer":{
+		// 		"email":this.state.email,
+		// 		"phonenumber":this.state.phoneNumber,
+		// 		"store":this.state.storename
+		// 	},
+		// 	"customizations":{
+		// 		"title":"Jumga",
+		// 		"description":"Activate your store",
+		// 	}
+		// }
+
+		// axios.defaults.headers.common = { Authorization: `Bearer ${process.env.NODE_ENV === 'development'? process.env.REACT_APP_FLUTTER_S_KEY_TEST : process.env.REACT_APP_FLUTTER_S_KEY}` };
+		// axios
+		// 	.post(`https://nameless-shelf-51198.herokuapp.com/https://api.flutterwave.com/v3/payments`, PayData)
+		// 	.then((res) => {
+		// 		console.log(res)
+		// 		if (res.status === 200) {
+		// 			window.location.assign(res.data.data.link)
+		// 		}
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log({error});
+		// 		this.setState({
+		// 			uiLoading: false
+		// 		});
+		// 	});
 	}
 
 	updateFormValues = (event) => {
@@ -374,6 +384,31 @@ class account extends Component {
 										></SelectCurrency>
 									</Grid>
 								</Grid>
+								//+ for subaccounts
+									<Grid item md={6} xs={12}>
+										<TextField
+											fullWidth
+											label="Account Number"
+											name="accountNumber"
+											variant="outlined"
+											value={this.state.accountNumber}
+											onChange={this.handleChange}
+											helperText={errors.accountNumber}
+											error={errors.accountNumber ? true : false}
+										/>
+									</Grid>
+									<Grid item md={6} xs={12}>
+										<TextField
+											fullWidth
+											label="Account Number"
+											name="accountNumber"
+											variant="outlined"
+											value={this.state.accountNumber}
+											onChange={this.handleChange}
+											helperText={errors.accountNumber}
+											error={errors.accountNumber ? true : false}
+										/>
+									</Grid>
 							</CardContent>
 							<Divider />
 							<CardActions />
