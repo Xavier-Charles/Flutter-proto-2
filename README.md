@@ -20,5 +20,14 @@
 - Dispatch riders are selected by the Jumga managers for each country.
 - Jumga gets a 20% commision on Delivery fees
 
+## Orders
+- Once an order is made Sellers are informed via a mail and SMS cloud function
+
+## Commisions
+- Sales Commission 2.5%
+- Delivery Commission 20%
+- Tax 1.3% 
+- Tax is included in the commission taken by Jumga
+
 ## Disclaimer
 Parts of the code were forked from a [previous project](https://github.com/Xavier-Charles/Jedi-proto-1)
